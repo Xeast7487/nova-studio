@@ -1,0 +1,652 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Admin — Nova Studio">
+<main id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-logo">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
+        <path d="M6 34V6l22 28V6" stroke="url(#ng)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18 6l16 28" stroke="#0F1322" stroke-width="5" stroke-linecap="round"/>
+        <path d="M18 6l16 28" stroke="url(#ng)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
+      </svg>
+    </div>
+    <h2>Nova Studio Admin</h2>
+    <p>Entrez votre mot de passe</p>
+    <input type="password" id="pwd" placeholder="••••••••" autofocus />
+    <button id="pwd-btn" class="btn-primary">Accéder</button>
+    <p id="pwd-err" class="err-msg"></p>
+  </div>
+</main>
+
+<div id="admin-app" style="display:none">
+  <header class="admin-nav">
+    <div class="admin-nav-inner">
+      <a href="/" class="admin-logo">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <defs><linearGradient id="ng3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
+          <path d="M6 34V6l22 28V6" stroke="url(#ng3)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M18 6l16 28" stroke="#0F1322" stroke-width="5" stroke-linecap="round"/>
+          <path d="M18 6l16 28" stroke="url(#ng3)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
+        </svg>
+        <span>Nova Studio</span>
+      </a>
+      <div class="admin-tabs">
+        <button class="atab active" data-tab="clients">👤 Clients</button>
+        <button class="atab" data-tab="invoices">📄 Factures</button>
+      </div>
+      <button id="logout-btn" class="btn-outline-sm">Déconnexion</button>
+    </div>
+  </header>
+
+  <!-- ── STATS ── -->
+  <div class="admin-stats" id="admin-stats"></div>
+
+  <!-- ── TAB CLIENTS ── -->
+  <div id="tab-clients" class="admin-tab-content">
+    <div class="tab-header">
+      <h1>Clients</h1>
+      <button id="open-client-modal" class="btn-primary">+ Nouveau client</button>
+    </div>
+    <div id="clients-list" class="clients-list"></div>
+  </div>
+
+  <!-- ── TAB FACTURES ── -->
+  <div id="tab-invoices" class="admin-tab-content" style="display:none">
+    <div class="tab-header">
+      <h1>Factures</h1>
+      <button id="open-invoice-modal" class="btn-primary">+ Nouvelle facture</button>
+    </div>
+    <div id="invoices-list" class="invoices-list"></div>
+  </div>
+</div>
+
+<!-- MODAL CLIENT -->
+<div id="client-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="client-modal-title">Nouveau client</h3>
+      <button class="modal-close" id="close-client-modal">×</button>
+    </div>
+    <form id="client-form">
+      <input type="hidden" id="c-edit-id" />
+      <div class="mform-row">
+        <div class="mfield"><label>Nom complet *</label><input type="text" id="c-name" required /></div>
+        <div class="mfield"><label>Entreprise</label><input type="text" id="c-company" placeholder="Optionnel" /></div>
+      </div>
+      <div class="mform-row">
+        <div class="mfield"><label>Courriel *</label><input type="email" id="c-email" required /></div>
+        <div class="mfield"><label>Téléphone</label><input type="tel" id="c-phone" placeholder="Optionnel" /></div>
+      </div>
+      <div class="mfield">
+        <label>Mot de passe portail *</label>
+        <input type="text" id="c-password" placeholder="Mot de passe pour le portail client" required />
+        <small>Le client utilisera ce mot de passe pour accéder à ses factures.</small>
+      </div>
+      <div class="modal-foot">
+        <button type="button" id="cancel-client" class="btn-outline-sm">Annuler</button>
+        <button type="submit" class="btn-primary" id="save-client-btn">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL FACTURE -->
+<div id="invoice-modal" class="modal-overlay" style="display:none">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h3 id="invoice-modal-title">Nouvelle facture</h3>
+      <button class="modal-close" id="close-invoice-modal">×</button>
+    </div>
+    <form id="invoice-form">
+      <input type="hidden" id="inv-edit-id" />
+      <div class="mform-row">
+        <div class="mfield">
+          <label>Client *</label>
+          <select id="inv-client" required>
+            <option value="">Choisir un client...</option>
+          </select>
+        </div>
+        <div class="mfield">
+          <label>Numéro de facture *</label>
+          <input type="text" id="inv-number" placeholder="NOVA-2026-001" required />
+        </div>
+      </div>
+      <div class="mfield">
+        <label>Titre / description courte *</label>
+        <input type="text" id="inv-title" placeholder="ex: Création site web vitrine" required />
+      </div>
+
+      <!-- Lignes de la facture -->
+      <div class="inv-items-section">
+        <div class="inv-items-head">
+          <p class="inv-items-label">Lignes de facturation</p>
+          <button type="button" id="add-item-btn" class="btn-add-item">+ Ajouter une ligne</button>
+        </div>
+        <div class="inv-items-header-row">
+          <span>Description</span><span>Qté</span><span>Prix unitaire</span><span>Total</span><span></span>
+        </div>
+        <div id="inv-items"></div>
+      </div>
+
+      <!-- Taxes du Québec -->
+      <div class="inv-taxes-section">
+        <label class="tax-check-label">
+          <input type="checkbox" id="apply-tps" checked />
+          <span>TPS (5%)</span>
+        </label>
+        <label class="tax-check-label">
+          <input type="checkbox" id="apply-tvq" checked />
+          <span>TVQ (9.975%)</span>
+        </label>
+      </div>
+
+      <!-- Totaux -->
+      <div class="inv-totals">
+        <div class="total-row"><span>Sous-total</span><span id="disp-subtotal">0,00 $</span></div>
+        <div class="total-row" id="row-tps"><span>TPS (5%)</span><span id="disp-tps">0,00 $</span></div>
+        <div class="total-row" id="row-tvq"><span>TVQ (9,975%)</span><span id="disp-tvq">0,00 $</span></div>
+        <div class="total-row total-grand"><span>TOTAL</span><span id="disp-total">0,00 $</span></div>
+      </div>
+
+      <div class="mform-row">
+        <div class="mfield">
+          <label>Date d'échéance</label>
+          <input type="date" id="inv-due" />
+        </div>
+        <div class="mfield">
+          <label>Statut</label>
+          <select id="inv-status">
+            <option value="pending">En attente</option>
+            <option value="paid">Payée</option>
+            <option value="overdue">En retard</option>
+            <option value="cancelled">Annulée</option>
+          </select>
+        </div>
+      </div>
+      <div class="mfield">
+        <label>Notes (optionnel)</label>
+        <textarea id="inv-notes" rows="2" placeholder="Conditions de paiement, informations supplémentaires..."></textarea>
+      </div>
+      <div class="modal-foot">
+        <button type="button" id="cancel-invoice" class="btn-outline-sm">Annuler</button>
+        <button type="submit" class="btn-primary" id="save-invoice-btn">Enregistrer la facture</button>
+      </div>
+    </form>
+  </div>
+</div>
+</Layout>
+
+<script>
+import { createClient } from '@supabase/supabase-js';
+import { createHash } from 'crypto';
+
+const SB_URL = 'https://gnpjilwdehxsafdqdtak.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImducGppbHdkZWh4c2FmZHFkdGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5Nzk3NjIsImV4cCI6MjA5NTU1NTc2Mn0.iFYR9r5ZZsKcc9n2N8jPtFTLs0QDTIqR3KMCMhCdSdA';
+const sb = createClient(SB_URL, SB_KEY);
+
+const ADMIN_PWD = 'nova2025';
+
+// Auth
+const lock  = document.getElementById('lock-screen');
+const app   = document.getElementById('admin-app');
+const pwdIn = document.getElementById('pwd') as HTMLInputElement;
+const pwdBtn = document.getElementById('pwd-btn');
+const pwdErr = document.getElementById('pwd-err');
+
+if (sessionStorage.getItem('nova-admin') === '1') { lock.style.display = 'none'; app.style.display = 'block'; init(); }
+
+pwdBtn?.addEventListener('click', () => {
+  if (pwdIn.value === ADMIN_PWD) {
+    sessionStorage.setItem('nova-admin', '1');
+    lock.style.display = 'none'; app.style.display = 'block'; init();
+  } else { if (pwdErr) pwdErr.textContent = 'Mot de passe incorrect'; }
+});
+pwdIn?.addEventListener('keydown', e => e.key === 'Enter' && pwdBtn?.click());
+document.getElementById('logout-btn')?.addEventListener('click', () => { sessionStorage.removeItem('nova-admin'); location.reload(); });
+
+// Tabs
+document.querySelectorAll('.atab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.atab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-content').forEach(t => (t as HTMLElement).style.display = 'none');
+    btn.classList.add('active');
+    const tab = (btn as HTMLElement).dataset.tab;
+    const el  = document.getElementById(`tab-${tab}`);
+    if (el) el.style.display = 'block';
+    if (tab === 'invoices') loadInvoices();
+    if (tab === 'clients')  loadClients();
+  });
+});
+
+// Hash password (frontend only - same as API)
+function hashPwd(pwd: string) {
+  let hash = 0;
+  const str = pwd + 'nova-studio-salt';
+  for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+  // Use SubtleCrypto for proper SHA-256
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(buf =>
+    Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('')
+  );
+}
+
+const fmt = (n: number) => n.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $';
+
+let allClients: any[] = [];
+
+async function init() {
+  await loadClients();
+  await loadStats();
+}
+
+// ── STATS ──────────────────────────────────────────────────
+async function loadStats() {
+  const [{ data: clients }, { data: invoices }] = await Promise.all([
+    sb.from('nova_clients').select('id'),
+    sb.from('nova_invoices').select('total, status'),
+  ]);
+  const pending = invoices?.filter(i => i.status === 'pending').reduce((s, i) => s + parseFloat(i.total), 0) || 0;
+  const paid    = invoices?.filter(i => i.status === 'paid').reduce((s, i) => s + parseFloat(i.total), 0) || 0;
+
+  const el = document.getElementById('admin-stats');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="stat-box"><span class="sb-n">${clients?.length || 0}</span><span class="sb-l">Clients</span></div>
+    <div class="stat-box"><span class="sb-n">${invoices?.length || 0}</span><span class="sb-l">Factures</span></div>
+    <div class="stat-box"><span class="sb-n">${fmt(pending)}</span><span class="sb-l">En attente</span></div>
+    <div class="stat-box sb-green"><span class="sb-n">${fmt(paid)}</span><span class="sb-l">Encaissé</span></div>
+  `;
+}
+
+// ── CLIENTS ────────────────────────────────────────────────
+async function loadClients() {
+  const { data } = await sb.from('nova_clients').select('*, nova_invoices(count)').order('created_at', { ascending: false });
+  allClients = data || [];
+  renderClients();
+  await loadStats();
+  // Refresh invoice client select
+  const sel = document.getElementById('inv-client') as HTMLSelectElement;
+  if (sel) {
+    sel.innerHTML = '<option value="">Choisir un client...</option>' +
+      allClients.map(c => `<option value="${c.id}">${c.name}${c.company ? ` — ${c.company}` : ''}</option>`).join('');
+  }
+}
+
+function renderClients() {
+  const el = document.getElementById('clients-list');
+  if (!el) return;
+  if (!allClients.length) { el.innerHTML = '<div class="empty-state">Aucun client. Créez le premier !</div>'; return; }
+  el.innerHTML = allClients.map(c => `
+    <div class="client-row">
+      <div class="cr-avatar">${c.name.charAt(0).toUpperCase()}</div>
+      <div class="cr-info">
+        <p class="cr-name">${c.name}</p>
+        <p class="cr-meta">${c.email}${c.company ? ` · ${c.company}` : ''}${c.phone ? ` · ${c.phone}` : ''}</p>
+      </div>
+      <div class="cr-actions">
+        <a href="/portal" target="_blank" class="btn-sm-outline">Portail</a>
+        <button class="btn-sm" onclick="editClient('${c.id}')">✏️ Modifier</button>
+        <button class="btn-sm btn-danger" onclick="deleteClient('${c.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Client modal
+document.getElementById('open-client-modal')?.addEventListener('click', () => {
+  resetClientForm();
+  openModal('client-modal');
+});
+document.getElementById('close-client-modal')?.addEventListener('click', () => closeModal('client-modal'));
+document.getElementById('cancel-client')?.addEventListener('click', () => closeModal('client-modal'));
+
+document.getElementById('client-form')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('save-client-btn') as HTMLButtonElement;
+  btn.disabled = true; btn.textContent = 'Enregistrement...';
+  const editId = (document.getElementById('c-edit-id') as HTMLInputElement).value;
+  const pwd    = (document.getElementById('c-password') as HTMLInputElement).value;
+  const hash   = await hashPwd(pwd);
+  const payload: any = {
+    name:          (document.getElementById('c-name') as HTMLInputElement).value.trim(),
+    email:         (document.getElementById('c-email') as HTMLInputElement).value.trim().toLowerCase(),
+    company:       (document.getElementById('c-company') as HTMLInputElement).value.trim(),
+    phone:         (document.getElementById('c-phone') as HTMLInputElement).value.trim(),
+    password_hash: hash,
+  };
+  try {
+    if (editId) await sb.from('nova_clients').update(payload).eq('id', editId);
+    else        await sb.from('nova_clients').insert(payload);
+    closeModal('client-modal'); await loadClients();
+  } catch (err: any) { alert('Erreur : ' + err.message); }
+  btn.disabled = false; btn.textContent = 'Enregistrer';
+});
+
+(window as any).editClient = async (id: string) => {
+  const c = allClients.find(c => c.id === id);
+  if (!c) return;
+  (document.getElementById('c-edit-id') as HTMLInputElement).value = c.id;
+  (document.getElementById('c-name') as HTMLInputElement).value    = c.name;
+  (document.getElementById('c-email') as HTMLInputElement).value   = c.email;
+  (document.getElementById('c-company') as HTMLInputElement).value = c.company || '';
+  (document.getElementById('c-phone') as HTMLInputElement).value   = c.phone || '';
+  (document.getElementById('c-password') as HTMLInputElement).value = '';
+  (document.getElementById('client-modal-title') as HTMLElement).textContent = 'Modifier le client';
+  const pwdField = document.getElementById('c-password') as HTMLInputElement;
+  pwdField.required = false; pwdField.placeholder = 'Laisser vide pour ne pas changer';
+  openModal('client-modal');
+};
+
+(window as any).deleteClient = async (id: string) => {
+  if (!confirm('Supprimer ce client et toutes ses factures ?')) return;
+  await sb.from('nova_clients').delete().eq('id', id);
+  await loadClients();
+};
+
+function resetClientForm() {
+  (document.getElementById('c-edit-id') as HTMLInputElement).value = '';
+  (document.getElementById('client-form') as HTMLFormElement).reset();
+  (document.getElementById('client-modal-title') as HTMLElement).textContent = 'Nouveau client';
+  const pwdField = document.getElementById('c-password') as HTMLInputElement;
+  pwdField.required = true; pwdField.placeholder = 'Mot de passe pour le portail';
+}
+
+// ── FACTURES ───────────────────────────────────────────────
+const STATUS_LABELS: Record<string,string> = { pending: 'En attente', paid: 'Payée', overdue: 'En retard', cancelled: 'Annulée' };
+
+async function loadInvoices() {
+  const { data } = await sb.from('nova_invoices')
+    .select('*, nova_clients(name, company)')
+    .order('created_at', { ascending: false });
+  const el = document.getElementById('invoices-list');
+  if (!el) return;
+  if (!data?.length) { el.innerHTML = '<div class="empty-state">Aucune facture.</div>'; return; }
+  el.innerHTML = data.map(inv => `
+    <div class="invoice-row">
+      <div class="inv-num-col">
+        <p class="inv-number">${inv.invoice_number}</p>
+        <p class="inv-date">${new Date(inv.created_at).toLocaleDateString('fr-CA')}</p>
+      </div>
+      <div class="inv-info">
+        <p class="inv-title-text">${inv.title}</p>
+        <p class="inv-client-name">${(inv as any).nova_clients?.name || ''}${(inv as any).nova_clients?.company ? ` · ${(inv as any).nova_clients.company}` : ''}</p>
+      </div>
+      <span class="status-chip status-${inv.status}">${STATUS_LABELS[inv.status]}</span>
+      <span class="inv-total">${fmt(parseFloat(inv.total))}</span>
+      <div class="inv-actions">
+        <button class="btn-sm" onclick="editInvoice('${inv.id}')">✏️</button>
+        <button class="btn-sm btn-success" onclick="markPaid('${inv.id}', '${inv.status}')">✅</button>
+        <button class="btn-sm btn-danger" onclick="deleteInvoice('${inv.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  await loadStats();
+}
+
+// Invoice modal
+let invItems: {desc:string;qty:number;price:number}[] = [];
+
+document.getElementById('open-invoice-modal')?.addEventListener('click', () => {
+  resetInvoiceForm();
+  openModal('invoice-modal');
+  loadClients();
+});
+document.getElementById('close-invoice-modal')?.addEventListener('click', () => closeModal('invoice-modal'));
+document.getElementById('cancel-invoice')?.addEventListener('click', () => closeModal('invoice-modal'));
+
+document.getElementById('add-item-btn')?.addEventListener('click', () => {
+  invItems.push({ desc: '', qty: 1, price: 0 });
+  renderInvItems();
+});
+
+function renderInvItems() {
+  const el = document.getElementById('inv-items');
+  if (!el) return;
+  el.innerHTML = invItems.map((item, i) => `
+    <div class="inv-item-row">
+      <input type="text" class="item-desc" placeholder="Description" value="${item.desc}" onchange="updateItem(${i},'desc',this.value)" />
+      <input type="number" class="item-qty" min="1" value="${item.qty}" onchange="updateItem(${i},'qty',+this.value)" />
+      <input type="number" class="item-price" min="0" step="0.01" value="${item.price}" onchange="updateItem(${i},'price',+this.value)" placeholder="0.00" />
+      <span class="item-total">${fmt(item.qty * item.price)}</span>
+      <button type="button" class="btn-remove-item" onclick="removeItem(${i})">×</button>
+    </div>
+  `).join('');
+  calcTotals();
+}
+
+(window as any).updateItem = (i: number, key: string, val: any) => {
+  invItems[i][key as keyof typeof invItems[0]] = val;
+  renderInvItems();
+};
+(window as any).removeItem = (i: number) => {
+  invItems.splice(i, 1);
+  renderInvItems();
+};
+
+function calcTotals() {
+  const subtotal = invItems.reduce((s, it) => s + it.qty * it.price, 0);
+  const applyTps = (document.getElementById('apply-tps') as HTMLInputElement)?.checked;
+  const applyTvq = (document.getElementById('apply-tvq') as HTMLInputElement)?.checked;
+  const tps = applyTps ? subtotal * 0.05 : 0;
+  const tvq = applyTvq ? subtotal * 0.09975 : 0;
+  const total = subtotal + tps + tvq;
+
+  const set = (id: string, val: string) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  set('disp-subtotal', fmt(subtotal));
+  set('disp-tps', fmt(tps));
+  set('disp-tvq', fmt(tvq));
+  set('disp-total', fmt(total));
+
+  const rowTps = document.getElementById('row-tps');
+  const rowTvq = document.getElementById('row-tvq');
+  if (rowTps) rowTps.style.opacity = applyTps ? '1' : '0.3';
+  if (rowTvq) rowTvq.style.opacity = applyTvq ? '1' : '0.3';
+
+  return { subtotal, tps, tvq, total, applyTps, applyTvq };
+}
+
+document.getElementById('apply-tps')?.addEventListener('change', calcTotals);
+document.getElementById('apply-tvq')?.addEventListener('change', calcTotals);
+
+document.getElementById('invoice-form')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('save-invoice-btn') as HTMLButtonElement;
+  btn.disabled = true; btn.textContent = 'Enregistrement...';
+  const editId = (document.getElementById('inv-edit-id') as HTMLInputElement).value;
+  const { subtotal, tps, tvq, total, applyTps, applyTvq } = calcTotals();
+  const dueDateVal = (document.getElementById('inv-due') as HTMLInputElement).value;
+  const payload = {
+    client_id:      (document.getElementById('inv-client') as HTMLSelectElement).value,
+    invoice_number: (document.getElementById('inv-number') as HTMLInputElement).value.trim(),
+    title:          (document.getElementById('inv-title') as HTMLInputElement).value.trim(),
+    items:          invItems,
+    subtotal:       Math.round(subtotal * 100) / 100,
+    tax_rate:       applyTps ? 5 : 0,
+    tax:            Math.round((tps + tvq) * 100) / 100,
+    total:          Math.round(total * 100) / 100,
+    apply_tps:      applyTps,
+    apply_tvq:      applyTvq,
+    tps_amount:     Math.round(tps * 100) / 100,
+    tvq_amount:     Math.round(tvq * 100) / 100,
+    status:         (document.getElementById('inv-status') as HTMLSelectElement).value,
+    due_date:       dueDateVal || null,
+    notes:          (document.getElementById('inv-notes') as HTMLTextAreaElement).value.trim(),
+  };
+  try {
+    if (editId) await sb.from('nova_invoices').update(payload).eq('id', editId);
+    else        await sb.from('nova_invoices').insert(payload);
+    closeModal('invoice-modal'); await loadInvoices();
+  } catch (err: any) { alert('Erreur : ' + err.message); }
+  btn.disabled = false; btn.textContent = 'Enregistrer la facture';
+});
+
+(window as any).markPaid = async (id: string, current: string) => {
+  const next = current === 'paid' ? 'pending' : 'paid';
+  await sb.from('nova_invoices').update({ status: next }).eq('id', id);
+  await loadInvoices();
+};
+
+(window as any).deleteInvoice = async (id: string) => {
+  if (!confirm('Supprimer cette facture ?')) return;
+  await sb.from('nova_invoices').delete().eq('id', id);
+  await loadInvoices();
+};
+
+(window as any).editInvoice = async (id: string) => {
+  const { data: inv } = await sb.from('nova_invoices').select('*').eq('id', id).single();
+  if (!inv) return;
+  (document.getElementById('inv-edit-id') as HTMLInputElement).value = inv.id;
+  (document.getElementById('inv-client') as HTMLSelectElement).value = inv.client_id;
+  (document.getElementById('inv-number') as HTMLInputElement).value  = inv.invoice_number;
+  (document.getElementById('inv-title') as HTMLInputElement).value   = inv.title;
+  (document.getElementById('inv-status') as HTMLSelectElement).value = inv.status;
+  (document.getElementById('inv-due') as HTMLInputElement).value     = inv.due_date || '';
+  (document.getElementById('inv-notes') as HTMLTextAreaElement).value = inv.notes || '';
+  (document.getElementById('apply-tps') as HTMLInputElement).checked = inv.apply_tps !== false;
+  (document.getElementById('apply-tvq') as HTMLInputElement).checked = inv.apply_tvq !== false;
+  invItems = Array.isArray(inv.items) ? inv.items : [];
+  renderInvItems();
+  (document.getElementById('invoice-modal-title') as HTMLElement).textContent = 'Modifier la facture';
+  openModal('invoice-modal');
+};
+
+function resetInvoiceForm() {
+  (document.getElementById('inv-edit-id') as HTMLInputElement).value = '';
+  (document.getElementById('invoice-form') as HTMLFormElement).reset();
+  invItems = [{ desc: '', qty: 1, price: 0 }];
+  renderInvItems();
+  (document.getElementById('invoice-modal-title') as HTMLElement).textContent = 'Nouvelle facture';
+  // Auto-generate invoice number
+  const now = new Date();
+  const n = Math.floor(Math.random() * 900) + 100;
+  (document.getElementById('inv-number') as HTMLInputElement).value =
+    `NOVA-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}-${n}`;
+  // Default due date: 30 days
+  const due = new Date(); due.setDate(due.getDate() + 30);
+  (document.getElementById('inv-due') as HTMLInputElement).value = due.toISOString().split('T')[0];
+  (document.getElementById('apply-tps') as HTMLInputElement).checked = true;
+  (document.getElementById('apply-tvq') as HTMLInputElement).checked = true;
+  calcTotals();
+}
+
+function openModal(id: string)  { const m = document.getElementById(id); if (m) m.style.display = 'flex'; }
+function closeModal(id: string) { const m = document.getElementById(id); if (m) m.style.display = 'none'; }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.style.display = 'none'; });
+});
+</script>
+
+<style>
+  /* Lock */
+  #lock-screen { min-height: 100vh; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .lock-card { background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 3rem 2.5rem; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 8px 40px rgba(79,106,255,0.1); display: flex; flex-direction: column; gap: 1rem; align-items: center; }
+  .lock-logo { animation: float 3s ease infinite; }
+  .lock-card h2 { font-size: 1.4rem; }
+  .lock-card p  { font-size: 0.875rem; color: var(--text-2); }
+  .lock-card input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; outline: none; font-family: 'Inter', sans-serif; text-align: center; letter-spacing: 0.1em; }
+  .lock-card input:focus { border-color: var(--blue); }
+  .err-msg { font-size: 0.8rem; color: var(--danger); min-height: 1rem; }
+
+  /* Admin app */
+  #admin-app { min-height: 100vh; background: var(--bg); }
+  .admin-nav { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+  .admin-nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; padding: 0 2rem; height: 64px; }
+  .admin-logo { display: flex; align-items: center; gap: 0.5rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); flex-shrink: 0; }
+  .admin-tabs { display: flex; gap: 0.25rem; margin-left: auto; }
+  .atab { background: none; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: var(--text-2); cursor: pointer; transition: background 0.2s, color 0.2s; font-family: 'Inter', sans-serif; }
+  .atab:hover { background: var(--bg); color: var(--text); }
+  .atab.active { background: rgba(79,106,255,0.1); color: var(--blue); }
+
+  /* Stats */
+  .admin-stats { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .stat-box { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+  .sb-n { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); }
+  .sb-l { font-size: 0.78rem; color: var(--text-2); }
+  .sb-green .sb-n { color: var(--success); }
+
+  /* Tab content */
+  .admin-tab-content { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  .tab-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .tab-header h1 { font-size: 1.4rem; }
+  .empty-state { text-align: center; padding: 3rem; color: var(--text-2); font-style: italic; background: #fff; border: 1px dashed var(--border); border-radius: 16px; }
+
+  /* Clients */
+  .clients-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .client-row { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .cr-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; color: #fff; flex-shrink: 0; }
+  .cr-info { flex: 1; }
+  .cr-name { font-weight: 600; font-size: 0.95rem; }
+  .cr-meta { font-size: 0.78rem; color: var(--text-2); margin-top: 2px; }
+  .cr-actions { display: flex; gap: 0.5rem; }
+
+  /* Invoices */
+  .invoices-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .invoice-row { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+  .inv-num-col { flex-shrink: 0; }
+  .inv-number { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--navy); }
+  .inv-date { font-size: 0.72rem; color: var(--text-2); margin-top: 2px; }
+  .inv-info { flex: 1; }
+  .inv-title-text { font-weight: 600; font-size: 0.9rem; }
+  .inv-client-name { font-size: 0.78rem; color: var(--text-2); margin-top: 2px; }
+  .inv-total { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; color: var(--navy); white-space: nowrap; }
+  .inv-actions { display: flex; gap: 0.5rem; }
+
+  /* Status chips */
+  .status-chip { font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 999px; letter-spacing: 0.04em; }
+  .status-pending   { background: rgba(245,158,11,0.1);  color: #d97706; }
+  .status-paid      { background: rgba(16,185,129,0.1);  color: #059669; }
+  .status-overdue   { background: rgba(239,68,68,0.1);   color: #dc2626; }
+  .status-cancelled { background: rgba(107,114,128,0.1); color: #6b7280; }
+
+  /* Buttons */
+  .btn-primary { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--gradient); color: #fff; padding: 0.6rem 1.25rem; border-radius: 10px; font-size: 0.85rem; font-weight: 600; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-outline-sm { background: none; border: 1.5px solid var(--border); color: var(--text-2); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .btn-sm { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.75rem; border-radius: 7px; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .btn-sm-outline { background: none; border: 1px solid var(--blue); color: var(--blue); padding: 0.35rem 0.75rem; border-radius: 7px; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .btn-danger  { border-color: rgba(239,68,68,0.4); color: var(--danger); }
+  .btn-success { border-color: rgba(16,185,129,0.4); color: var(--success); }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,19,34,0.55); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .modal { background: #fff; border-radius: 20px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  .modal-wide { max-width: 780px; }
+  .modal-head { display: flex; align-items: center; justify-content: space-between; }
+  .modal-head h3 { font-size: 1.1rem; }
+  .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-2); line-height: 1; }
+  .modal-foot { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem; }
+  .mform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .mfield { display: flex; flex-direction: column; gap: 0.4rem; }
+  .mfield label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+  .mfield small { font-size: 0.72rem; color: var(--text-2); }
+  .mfield input, .mfield select, .mfield textarea { background: var(--bg); border: 1.5px solid var(--border); color: var(--text); border-radius: 10px; padding: 0.65rem 0.9rem; font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; resize: none; }
+  .mfield input:focus, .mfield select:focus, .mfield textarea:focus { border-color: var(--blue); }
+
+  /* Invoice items */
+  .inv-items-section { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+  .inv-items-head { display: flex; align-items: center; justify-content: space-between; }
+  .inv-items-label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+  .btn-add-item { background: rgba(79,106,255,0.08); border: none; color: var(--blue); padding: 0.3rem 0.75rem; border-radius: 7px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .inv-items-header-row { display: grid; grid-template-columns: 1fr 60px 110px 80px 30px; gap: 0.5rem; padding: 0 0.25rem; }
+  .inv-items-header-row span { font-size: 0.68rem; font-weight: 700; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
+  .inv-item-row { display: grid; grid-template-columns: 1fr 60px 110px 80px 30px; gap: 0.5rem; align-items: center; }
+  .inv-item-row input { background: #fff; border: 1.5px solid var(--border); border-radius: 8px; padding: 0.5rem 0.65rem; font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; width: 100%; }
+  .inv-item-row input:focus { border-color: var(--blue); }
+  .item-total { font-size: 0.82rem; font-weight: 600; color: var(--navy); text-align: right; }
+  .btn-remove-item { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--text-2); }
+
+  /* Taxes */
+  .inv-taxes-section { display: flex; gap: 1.5rem; }
+  .tax-check-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
+
+  /* Totaux */
+  .inv-totals { border-top: 1px solid var(--border); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .total-row { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-2); }
+  .total-grand { font-weight: 700; font-size: 1rem; color: var(--navy); padding-top: 0.5rem; border-top: 1px solid var(--border); }
+
+  @media (max-width: 700px) { .admin-stats { grid-template-columns: repeat(2, 1fr); } .mform-row { grid-template-columns: 1fr; } .invoice-row { flex-wrap: wrap; } }
+</style>
