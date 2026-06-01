@@ -4,17 +4,61 @@ export interface Props {
   description?: string;
 }
 const {
-  title       = 'Nova Studio — Création de sites web professionnels',
-  description = 'Nova Studio crée des sites web sur mesure : vitrines, boutiques, portails et tableaux de bord. Qualité professionnelle, délai rapide.',
+  title       = 'Nova Studio — Création de sites web professionnels au Québec',
+  description = 'Nova Studio crée des sites web sur mesure au Québec : vitrines, boutiques en ligne, portails clients et tableaux de bord. Qualité professionnelle, délai rapide, prix compétitifs.',
 } = Astro.props;
+
+const siteURL   = 'https://nova-studio-pied-eta.vercel.app';
+const canonical = new URL(Astro.url.pathname, siteURL).href;
+
+const jsonLD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Nova Studio",
+  "description": description,
+  "url": siteURL,
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": "Québec, Canada"
+  },
+  "serviceType": ["Création de sites web", "Développement web", "Sites vitrines", "Boutiques en ligne"],
+  "priceRange": "Sur demande",
+  "inLanguage": "fr-CA",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "availableLanguage": "French"
+  }
+});
 ---
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr-CA">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content={description} />
+
+  <!-- SEO de base -->
   <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={canonical} />
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp…) -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={canonical} />
+  <meta property="og:title"       content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:locale"      content="fr_CA" />
+  <meta property="og:site_name"   content="Nova Studio" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content={title} />
+  <meta name="twitter:description" content={description} />
+
+  <!-- JSON-LD schema pour Google -->
+  <script type="application/ld+json" set:html={jsonLD} />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />

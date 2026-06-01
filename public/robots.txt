@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /portal
+
+Sitemap: https://nova-studio-pied-eta.vercel.app/sitemap.xml
