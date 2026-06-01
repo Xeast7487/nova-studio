@@ -26,32 +26,6 @@ const projects = [
   { cat: 'Agence web', title: 'Nova Studio', desc: 'Ce site — portail client intégré, facturation et espace admin.', tags: ['Portail', 'Facturation', 'Admin'] },
 ];
 
-const plans = [
-  {
-    name: 'Essentiel',
-    price: '499',
-    desc: 'Parfait pour lancer votre présence en ligne.',
-    features: ['Site vitrine jusqu\'à 5 pages', 'Design responsive', 'Formulaire de contact', 'Hébergement 1 an', 'SEO de base', 'Livraison en 7 jours'],
-    cta: 'Démarrer',
-    highlight: false,
-  },
-  {
-    name: 'Pro',
-    price: '999',
-    desc: 'Pour les entreprises qui veulent se démarquer.',
-    features: ['Jusqu\'à 10 pages', 'Design premium sur mesure', 'Panel admin', 'Blog / actualités', 'Animations avancées', 'SEO complet', 'Livraison en 14 jours', 'Support 3 mois'],
-    cta: 'Choisir Pro',
-    highlight: true,
-  },
-  {
-    name: 'Sur mesure',
-    price: 'Devis',
-    desc: 'E-commerce, portail, application web complexe.',
-    features: ['Pages illimitées', 'Fonctionnalités sur mesure', 'Base de données & API', 'Portail client / facturation', 'Intégrations tierces', 'Support prioritaire 6 mois'],
-    cta: 'Demander un devis',
-    highlight: false,
-  },
-];
 ---
 <Layout>
 
@@ -224,32 +198,25 @@ const plans = [
   <div class="container">
     <div class="section-head reveal">
       <p class="eyebrow">Investissement</p>
-      <h2>Des tarifs <span class="text-gradient">transparents</span></h2>
-      <p class="section-sub">Pas de surprises. Tout est inclus dans le prix annoncé.</p>
+      <h2>Tarification <span class="text-gradient">sur demande</span></h2>
+      <p class="section-sub">Chaque projet est unique. Décrivez-moi votre vision et je vous propose une solution adaptée à vos besoins et à votre budget.</p>
     </div>
 
-    <div class="plans-grid">
-      {plans.map((plan, i) => (
-        <div class={`plan-card reveal ${plan.highlight ? 'plan-highlight' : ''}`} style={`transition-delay:${i * 0.1}s`}>
-          {plan.highlight && <div class="plan-badge">Plus populaire</div>}
-          <div class="plan-top">
-            <h3 class="plan-name">{plan.name}</h3>
-            <div class="plan-price">
-              {plan.price !== 'Devis' ? <><span class="price-num">{plan.price}</span><span class="price-unit">$</span></> : <span class="price-num price-devis">Sur devis</span>}
-            </div>
-            <p class="plan-desc">{plan.desc}</p>
-          </div>
-          <ul class="plan-features">
-            {plan.features.map(f => (
-              <li>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                {f}
-              </li>
-            ))}
-          </ul>
-          <a href="#contact" class={plan.highlight ? 'btn-primary' : 'btn-outline'}>{plan.cta}</a>
+    <div class="single-plan reveal">
+      <div class="sp-left">
+        <div class="sp-icon">💬</div>
+        <div>
+          <h3>Devis personnalisé gratuit</h3>
+          <p>Pas de forfaits rigides — je préfère comprendre votre projet avant de vous proposer un prix juste. Envoyez-moi votre idée et je reviens vers vous sous 24h avec une proposition sur mesure.</p>
         </div>
-      ))}
+      </div>
+      <div class="sp-features">
+        <div class="sp-feat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Analyse gratuite de vos besoins</div>
+        <div class="sp-feat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Devis détaillé sans engagement</div>
+        <div class="sp-feat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Prix ajusté à votre budget</div>
+        <div class="sp-feat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Réponse en moins de 24h</div>
+      </div>
+      <a href="#contact" class="btn-primary btn-lg">Demander un devis</a>
     </div>
   </div>
 </section>
@@ -275,7 +242,7 @@ const plans = [
       </div>
 
       <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="VOTRE_CLE_WEB3FORMS" />
+        <input type="hidden" name="access_key" value="9ab420c1-4542-4cb7-b83e-77dd07196e51" />
         <input type="hidden" name="subject" value="Nouveau projet — Nova Studio" />
         <input type="checkbox" name="botcheck" style="display:none" />
 
@@ -567,6 +534,23 @@ const plans = [
   .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; }
   .plan-features li { display: flex; align-items: center; gap: 0.6rem; font-size: 0.875rem; color: var(--text); }
   .plan-features li svg { color: var(--blue); flex-shrink: 0; }
+
+  /* ── TARIFS (single plan) ────────────────────────────── */
+  .single-plan {
+    background: #fff; border: 1.5px solid var(--border); border-radius: 24px;
+    padding: 2.5rem 3rem; max-width: 860px; margin: 0 auto;
+    display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;
+    box-shadow: 0 4px 24px rgba(79,106,255,0.06);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .single-plan:hover { border-color: rgba(79,106,255,0.3); box-shadow: 0 8px 40px rgba(79,106,255,0.1); }
+  .sp-left { display: flex; align-items: flex-start; gap: 1.25rem; flex: 1; min-width: 260px; }
+  .sp-icon { font-size: 2.2rem; flex-shrink: 0; }
+  .sp-left h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .sp-left p  { font-size: 0.875rem; color: var(--text-2); line-height: 1.7; }
+  .sp-features { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; flex-shrink: 0; }
+  .sp-feat { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--text); }
+  .sp-feat svg { color: var(--blue); flex-shrink: 0; }
 
   /* ── CONTACT ──────────────────────────────────────────── */
   .contact-inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; }
