@@ -563,7 +563,7 @@ function closeModal(id: string) { const m = document.getElementById(id); if (m) 
 document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) (m as HTMLElement).style.display = 'none'; }));
 </script>
 
-<style>
+<style is:global>
   /* ── LOCK ────────────────────────────────────────────────── */
   .lock-wrap { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
   .lock-left { background: var(--navy); padding: 3rem; display: flex; flex-direction: column; justify-content: center; gap: 2rem; }
