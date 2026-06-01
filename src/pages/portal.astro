@@ -5,41 +5,67 @@ import Layout from '../layouts/Layout.astro';
 <main>
 
   <!-- LOGIN -->
-  <div id="login-screen" class="portal-center">
-    <div class="portal-card">
-      <div class="portal-logo">
-        <svg width="44" height="44" viewBox="0 0 40 40" fill="none">
-          <defs><linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
-          <path d="M6 34V6l22 28V6" stroke="url(#pg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M18 6l16 28" stroke="#0F1322" stroke-width="5" stroke-linecap="round"/>
-          <path d="M18 6l16 28" stroke="url(#pg)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
-        </svg>
-        <div><span class="logo-nova">NOVA</span><span class="logo-studio">STUDIO</span></div>
+  <div id="login-screen" class="login-wrap">
+    <div class="login-left">
+      <div class="ll-content">
+        <div class="ll-logo">
+          <svg width="44" height="44" viewBox="0 0 40 40" fill="none">
+            <defs><linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
+            <path d="M6 34V6l22 28V6" stroke="url(#pg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 6l16 28" stroke="rgba(255,255,255,0.12)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M18 6l16 28" stroke="url(#pg)" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
+          </svg>
+          <div><span class="ll-nova">NOVA</span><span class="ll-studio">STUDIO</span></div>
+        </div>
+        <h1>Votre espace client</h1>
+        <p>Consultez vos factures, suivez vos projets et téléchargez vos documents en toute sécurité.</p>
+        <div class="ll-perks">
+          <div class="llp"><span class="llp-icon">📄</span><span>Accès à toutes vos factures</span></div>
+          <div class="llp"><span class="llp-icon">🔒</span><span>Espace sécurisé et privé</span></div>
+          <div class="llp"><span class="llp-icon">🖨️</span><span>Impression et export PDF</span></div>
+        </div>
       </div>
-      <h2>Portail client</h2>
-      <p class="portal-login-sub">Accédez à vos factures et documents</p>
-      <form id="login-form">
-        <div class="pfield">
-          <label>Adresse courriel</label>
-          <input type="email" id="login-email" placeholder="vous@exemple.com" required autocomplete="email" />
+    </div>
+    <div class="login-right">
+      <div class="login-form-wrap">
+        <div class="login-form-head">
+          <h2>Connexion</h2>
+          <p>Entrez vos identifiants fournis par Nova Studio</p>
         </div>
-        <div class="pfield">
-          <label>Mot de passe</label>
-          <input type="password" id="login-pwd" placeholder="••••••••" required autocomplete="current-password" />
-        </div>
-        <p id="login-err" class="login-err"></p>
-        <button type="submit" class="btn-login" id="login-btn">Se connecter</button>
-      </form>
-      <a href="/" class="back-site">← Retour au site</a>
+        <form id="login-form">
+          <div class="lf-field">
+            <label>Adresse courriel</label>
+            <div class="lf-input-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <input type="email" id="login-email" placeholder="vous@exemple.com" required autocomplete="email" />
+            </div>
+          </div>
+          <div class="lf-field">
+            <label>Mot de passe</label>
+            <div class="lf-input-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="login-pwd" placeholder="••••••••" required autocomplete="current-password" />
+            </div>
+          </div>
+          <p id="login-err" class="lf-err"></p>
+          <button type="submit" class="lf-btn" id="login-btn">
+            <span>Se connecter</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+        <a href="/" class="lf-back">← Retour au site Nova Studio</a>
+      </div>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
-  <div id="portal-app" style="display:none">
+  <!-- PORTAL APP -->
+  <div id="portal-app" style="display:none" class="portal-app">
+
+    <!-- HEADER -->
     <header class="portal-header">
       <div class="ph-inner">
-        <a href="/" class="portal-logo-link">
+        <a href="/" class="ph-logo">
           <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
             <defs><linearGradient id="pg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
             <path d="M6 34V6l22 28V6" stroke="url(#pg2)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -47,94 +73,130 @@ import Layout from '../layouts/Layout.astro';
             <path d="M18 6l16 28" stroke="url(#pg2)" stroke-width="3" stroke-linecap="round"/>
             <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
           </svg>
-          <div><span class="logo-nova">NOVA</span><span class="logo-studio">STUDIO</span></div>
+          <div><span class="ph-nova">NOVA</span><span class="ph-studio">STUDIO</span></div>
         </a>
-        <div class="ph-user">
-          <span id="ph-welcome">Bonjour</span>
-          <button id="portal-logout" class="btn-logout">Déconnexion</button>
+        <div class="ph-right">
+          <div class="ph-user-badge" id="ph-user-badge">
+            <div class="pub-avatar" id="pub-avatar">?</div>
+            <div class="pub-info">
+              <p class="pub-name" id="pub-name">Chargement...</p>
+              <p class="pub-company" id="pub-company"></p>
+            </div>
+          </div>
+          <button id="portal-logout" class="ph-logout">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Déconnexion
+          </button>
         </div>
       </div>
     </header>
 
+    <!-- DASHBOARD -->
     <div class="portal-body">
-      <div class="portal-page-head">
-        <h1>Mes factures</h1>
-        <p id="portal-company" class="portal-company"></p>
+
+      <!-- LISTE FACTURES -->
+      <div id="portal-dashboard">
+        <div class="dash-head">
+          <div>
+            <h1>Mes factures</h1>
+            <p class="dash-sub" id="dash-sub">Bienvenue dans votre espace client</p>
+          </div>
+        </div>
+        <div class="dash-stats" id="portal-stats"></div>
+        <div id="portal-invoices" class="invoices-list"></div>
       </div>
 
-      <!-- Stats rapides -->
-      <div class="portal-stats" id="portal-stats"></div>
+      <!-- DETAIL FACTURE -->
+      <div id="invoice-detail" style="display:none" class="inv-detail-wrap">
+        <div class="inv-detail-toolbar">
+          <button id="back-to-list" class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Retour aux factures
+          </button>
+          <button class="print-btn" onclick="window.print()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimer / PDF
+          </button>
+        </div>
 
-      <!-- Liste des factures -->
-      <div id="portal-invoices" class="portal-invoices-list"></div>
-
-      <!-- Vue détaillée d'une facture -->
-      <div id="invoice-detail" class="invoice-detail" style="display:none">
-        <button id="back-to-list" class="back-btn">← Retour à la liste</button>
-        <div id="invoice-print-zone" class="invoice-print-zone">
-
-          <div class="inv-doc-header">
+        <div id="invoice-print-zone" class="inv-doc">
+          <!-- EN-TÊTE -->
+          <div class="inv-doc-top">
             <div class="inv-doc-logo">
-              <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
                 <defs><linearGradient id="pg3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
                 <path d="M6 34V6l22 28V6" stroke="url(#pg3)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M18 6l16 28" stroke="#0F1322" stroke-width="5" stroke-linecap="round"/>
                 <path d="M18 6l16 28" stroke="url(#pg3)" stroke-width="3" stroke-linecap="round"/>
                 <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
               </svg>
-              <div><span class="logo-nova" style="font-size:1.2rem">NOVA</span><span class="logo-studio" style="font-size:0.65rem">STUDIO</span></div>
+              <div><span class="inv-logo-n">NOVA</span><span class="inv-logo-s">STUDIO</span></div>
             </div>
             <div class="inv-doc-meta">
-              <h2 id="inv-doc-title">FACTURE</h2>
-              <p id="inv-doc-number" class="inv-doc-num"></p>
+              <h2 class="inv-doc-title">FACTURE</h2>
+              <p id="inv-doc-number" class="inv-doc-number"></p>
+              <div id="inv-doc-status" class="inv-doc-status"></div>
             </div>
           </div>
 
-          <div class="inv-doc-parties">
-            <div>
-              <p class="inv-party-label">ÉMETTEUR</p>
-              <p class="inv-party-name">Nova Studio</p>
-              <p class="inv-party-info">contact@nova-studio.ca</p>
-              <p class="inv-party-info">Québec, Canada</p>
+          <!-- PARTIES -->
+          <div class="inv-parties">
+            <div class="inv-party">
+              <p class="ip-label">De</p>
+              <p class="ip-name">Nova Studio</p>
+              <p class="ip-info">contact@nova-studio.ca</p>
+              <p class="ip-info">Québec, Canada</p>
             </div>
-            <div class="inv-party-right">
-              <p class="inv-party-label">FACTURER À</p>
-              <p class="inv-party-name" id="inv-client-name"></p>
-              <p class="inv-party-info" id="inv-client-company"></p>
-              <p class="inv-party-info" id="inv-client-email"></p>
+            <div class="inv-party">
+              <p class="ip-label">Facturer à</p>
+              <p class="ip-name" id="inv-client-name"></p>
+              <p class="ip-info" id="inv-client-company"></p>
+              <p class="ip-info" id="inv-client-email"></p>
             </div>
-            <div>
-              <p class="inv-party-label">DATES</p>
-              <div class="inv-dates">
-                <div><span>Émise</span><strong id="inv-doc-date"></strong></div>
-                <div><span>Échéance</span><strong id="inv-doc-due"></strong></div>
+            <div class="inv-party">
+              <p class="ip-label">Dates</p>
+              <div class="ip-dates">
+                <div class="ipd-row"><span>Émise le</span><strong id="inv-doc-date"></strong></div>
+                <div class="ipd-row"><span>Échéance</span><strong id="inv-doc-due"></strong></div>
               </div>
-              <div class="inv-status-display" id="inv-status-display"></div>
             </div>
           </div>
 
-          <table class="inv-items-table">
+          <!-- TITRE DE LA FACTURE -->
+          <div class="inv-title-block">
+            <p class="itb-label">Objet</p>
+            <p class="itb-val" id="inv-title-display"></p>
+          </div>
+
+          <!-- LIGNES -->
+          <table class="inv-table">
             <thead>
-              <tr><th>Description</th><th>Qté</th><th>Prix unit.</th><th>Total</th></tr>
+              <tr>
+                <th>Description</th>
+                <th class="th-center">Qté</th>
+                <th class="th-right">Prix unit.</th>
+                <th class="th-right">Total</th>
+              </tr>
             </thead>
             <tbody id="inv-items-body"></tbody>
           </table>
 
-          <div class="inv-totals-block">
-            <div class="itb-row"><span>Sous-total</span><span id="inv-t-sub"></span></div>
-            <div class="itb-row" id="inv-t-tps-row"><span>TPS (5%)</span><span id="inv-t-tps"></span></div>
-            <div class="itb-row" id="inv-t-tvq-row"><span>TVQ (9,975%)</span><span id="inv-t-tvq"></span></div>
-            <div class="itb-row itb-total"><span>TOTAL</span><span id="inv-t-total"></span></div>
+          <!-- TOTAUX -->
+          <div class="inv-totals">
+            <div class="it-row"><span>Sous-total</span><span id="inv-t-sub"></span></div>
+            <div class="it-row it-sub" id="inv-t-tps-row"><span>TPS (5 %)</span><span id="inv-t-tps"></span></div>
+            <div class="it-row it-sub" id="inv-t-tvq-row"><span>TVQ (9,975 %)</span><span id="inv-t-tvq"></span></div>
+            <div class="it-row it-grand"><span>Total à payer</span><strong id="inv-t-total"></strong></div>
           </div>
 
-          <div id="inv-notes-block" class="inv-notes-block" style="display:none">
+          <!-- NOTES -->
+          <div id="inv-notes-block" class="inv-notes" style="display:none">
             <p class="inv-notes-label">Notes</p>
-            <p id="inv-notes-text"></p>
+            <p id="inv-notes-text" class="inv-notes-text"></p>
           </div>
 
-          <div class="inv-footer-text">Merci de votre confiance — Nova Studio</div>
+          <div class="inv-footer">Merci de votre confiance · Nova Studio · contact@nova-studio.ca</div>
         </div>
-        <button id="print-btn" class="btn-print" onclick="window.print()">🖨️ Imprimer / PDF</button>
       </div>
 
     </div>
@@ -150,278 +212,301 @@ const sb = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImducGppbHdkZWh4c2FmZHFkdGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5Nzk3NjIsImV4cCI6MjA5NTU1NTc2Mn0.iFYR9r5ZZsKcc9n2N8jPtFTLs0QDTIqR3KMCMhCdSdA'
 );
 
-const fmt    = (n: number) => n.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $';
-const fmtDate = (d: string) => d ? new Date(d).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
-
+const fmt     = (n: number) => n.toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $';
+const fmtDate = (d: string | null) => d ? new Date(d).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
 const STATUS: Record<string,{label:string;cls:string}> = {
-  pending:   { label: 'En attente',  cls: 'status-pending' },
-  paid:      { label: 'Payée',       cls: 'status-paid' },
-  overdue:   { label: 'En retard',   cls: 'status-overdue' },
-  cancelled: { label: 'Annulée',     cls: 'status-cancelled' },
+  pending:   { label: 'En attente',  cls: 'sp-pending' },
+  paid:      { label: 'Payée',       cls: 'sp-paid'    },
+  overdue:   { label: 'En retard',   cls: 'sp-overdue' },
+  cancelled: { label: 'Annulée',     cls: 'sp-cancelled' },
 };
 
-// Check session
 const saved = localStorage.getItem('nova-portal-client');
-if (saved) {
-  const c = JSON.parse(saved);
-  showApp(c);
-}
+if (saved) showApp(JSON.parse(saved));
 
-// Login
 document.getElementById('login-form')?.addEventListener('submit', async e => {
   e.preventDefault();
   const btn = document.getElementById('login-btn') as HTMLButtonElement;
-  const err = document.getElementById('login-err');
-  btn.disabled = true; btn.textContent = 'Connexion...';
-  if (err) err.textContent = '';
-
+  const err = document.getElementById('login-err')!;
+  btn.disabled = true;
+  btn.querySelector('span')!.textContent = 'Connexion...';
+  err.textContent = '';
   const email = (document.getElementById('login-email') as HTMLInputElement).value.trim().toLowerCase();
-  const pwd   = (document.getElementById('login-pwd') as HTMLInputElement).value;
-
+  const pwd   = (document.getElementById('login-pwd')   as HTMLInputElement).value;
   try {
     const res  = await fetch('/api/nova-auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pwd }) });
     const data = await res.json();
-    if (!res.ok) { if (err) err.textContent = data.error || 'Identifiants invalides'; }
-    else {
-      localStorage.setItem('nova-portal-client', JSON.stringify(data));
-      showApp(data);
-    }
-  } catch { if (err) err.textContent = 'Erreur de connexion'; }
-  btn.disabled = false; btn.textContent = 'Se connecter';
+    if (!res.ok) err.textContent = data.error || 'Identifiants invalides';
+    else { localStorage.setItem('nova-portal-client', JSON.stringify(data)); showApp(data); }
+  } catch { err.textContent = 'Erreur de connexion'; }
+  btn.disabled = false;
+  btn.querySelector('span')!.textContent = 'Se connecter';
 });
 
-document.getElementById('portal-logout')?.addEventListener('click', () => {
-  localStorage.removeItem('nova-portal-client');
-  location.reload();
-});
-
+document.getElementById('portal-logout')?.addEventListener('click', () => { localStorage.removeItem('nova-portal-client'); location.reload(); });
 document.getElementById('back-to-list')?.addEventListener('click', () => {
   document.getElementById('invoice-detail')!.style.display = 'none';
-  document.getElementById('portal-invoices')!.style.display = 'flex';
+  document.getElementById('portal-dashboard')!.style.display = 'block';
 });
 
 async function showApp(client: any) {
-  document.getElementById('login-screen')!.style.display = 'none';
-  document.getElementById('portal-app')!.style.display   = 'block';
-  const welEl = document.getElementById('ph-welcome');
-  if (welEl) welEl.textContent = `Bonjour, ${client.name}`;
-  const compEl = document.getElementById('portal-company');
-  if (compEl && client.company) compEl.textContent = client.company;
+  document.getElementById('login-screen')!.style.display  = 'none';
+  document.getElementById('portal-app')!.style.display    = 'block';
+
+  // Header user info
+  const avatar = client.name.charAt(0).toUpperCase();
+  const avatarEl = document.getElementById('pub-avatar'); if (avatarEl) avatarEl.textContent = avatar;
+  const nameEl   = document.getElementById('pub-name');   if (nameEl)   nameEl.textContent   = client.name;
+  const compEl   = document.getElementById('pub-company'); if (compEl)   compEl.textContent   = client.company || '';
+  const subEl    = document.getElementById('dash-sub');   if (subEl)    subEl.textContent    = `Bonjour ${client.name}${client.company ? ` · ${client.company}` : ''} 👋`;
 
   const { data: invoices } = await sb.from('nova_invoices').select('*').eq('client_id', client.id).order('created_at', { ascending: false });
   const invs = invoices || [];
-
-  // Stats
-  const pending = invs.filter(i => i.status === 'pending').reduce((s, i) => s + parseFloat(i.total), 0);
-  const paid    = invs.filter(i => i.status === 'paid').reduce((s, i) => s + parseFloat(i.total), 0);
-  const statsEl = document.getElementById('portal-stats');
-  if (statsEl) statsEl.innerHTML = `
-    <div class="ps-box"><span class="ps-n">${invs.length}</span><span class="ps-l">Factures</span></div>
-    <div class="ps-box ps-warn"><span class="ps-n">${fmt(pending)}</span><span class="ps-l">En attente</span></div>
-    <div class="ps-box ps-ok"><span class="ps-n">${fmt(paid)}</span><span class="ps-l">Payé</span></div>
-  `;
-
-  // Invoices list
-  const listEl = document.getElementById('portal-invoices');
-  if (listEl) {
-    if (!invs.length) { listEl.innerHTML = '<div class="empty-inv">Aucune facture pour l\'instant.</div>'; }
-    else {
-      listEl.style.display = 'flex';
-      listEl.innerHTML = invs.map(inv => `
-        <div class="portal-inv-card" data-id="${inv.id}">
-          <div class="pic-left">
-            <p class="pic-num">${inv.invoice_number}</p>
-            <p class="pic-date">${fmtDate(inv.created_at)}</p>
-          </div>
-          <div class="pic-mid">
-            <p class="pic-title">${inv.title}</p>
-            ${inv.due_date ? `<p class="pic-due">Échéance : ${fmtDate(inv.due_date)}</p>` : ''}
-          </div>
-          <span class="status-chip ${STATUS[inv.status]?.cls || ''}">${STATUS[inv.status]?.label || inv.status}</span>
-          <p class="pic-total">${fmt(parseFloat(inv.total))}</p>
-          <button class="btn-view" onclick="viewInvoice('${inv.id}', ${JSON.stringify(client).replace(/"/g, '&quot;')})">Voir →</button>
-        </div>
-      `).join('');
-    }
-  }
-
   (window as any)._invoices = invs;
   (window as any)._client   = client;
+
+  // Stats
+  const pending = invs.filter((i:any) => i.status === 'pending').reduce((s:number, i:any) => s + parseFloat(i.total), 0);
+  const paid    = invs.filter((i:any) => i.status === 'paid').reduce((s:number, i:any) => s + parseFloat(i.total), 0);
+  const statsEl = document.getElementById('portal-stats');
+  if (statsEl) statsEl.innerHTML = `
+    <div class="ds-card"><div class="dsc-icon dsc-blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><p class="dsc-val">${invs.length}</p><p class="dsc-lbl">Factures</p></div></div>
+    <div class="ds-card"><div class="dsc-icon dsc-amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><p class="dsc-val">${fmt(pending)}</p><p class="dsc-lbl">En attente</p></div></div>
+    <div class="ds-card"><div class="dsc-icon dsc-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div><p class="dsc-val">${fmt(paid)}</p><p class="dsc-lbl">Payé</p></div></div>
+  `;
+
+  // List
+  const listEl = document.getElementById('portal-invoices');
+  if (!listEl) return;
+  if (!invs.length) {
+    listEl.innerHTML = '<div class="empty-inv"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Aucune facture pour l\'instant</p><small>Vos factures apparaîtront ici dès qu\'elles seront créées.</small></div>';
+    return;
+  }
+  listEl.innerHTML = `
+    <div class="inv-list-header">
+      <span>Numéro</span><span>Description</span><span>Date</span><span>Statut</span><span>Montant</span><span></span>
+    </div>
+    ${invs.map((inv:any) => `
+      <div class="inv-list-row" onclick="viewInvoice('${inv.id}')">
+        <span class="ilr-num">${inv.invoice_number}</span>
+        <span class="ilr-title">${inv.title}</span>
+        <span class="ilr-date">${fmtDate(inv.created_at)}</span>
+        <span class="status-pill ${STATUS[inv.status]?.cls || ''}">${STATUS[inv.status]?.label || inv.status}</span>
+        <span class="ilr-amount">${fmt(parseFloat(inv.total))}</span>
+        <span class="ilr-arrow">→</span>
+      </div>
+    `).join('')}
+  `;
 }
 
-(window as any).viewInvoice = (id: string, client: any) => {
-  const invs  = (window as any)._invoices as any[];
-  const inv   = invs.find(i => i.id === id);
-  if (!inv) return;
+(window as any).viewInvoice = (id: string) => {
+  const invs = (window as any)._invoices as any[];
+  const inv  = invs.find((i:any) => i.id === id); if (!inv) return;
+  const client = (window as any)._client;
 
-  document.getElementById('portal-invoices')!.style.display = 'none';
-  document.getElementById('invoice-detail')!.style.display  = 'block';
+  document.getElementById('portal-dashboard')!.style.display = 'none';
+  document.getElementById('invoice-detail')!.style.display   = 'block';
 
   const set = (elId: string, val: string) => { const e = document.getElementById(elId); if (e) e.textContent = val; };
-  set('inv-doc-number',     inv.invoice_number);
-  set('inv-doc-date',       fmtDate(inv.created_at));
-  set('inv-doc-due',        fmtDate(inv.due_date));
-  set('inv-client-name',    client.name);
-  set('inv-client-company', client.company || '');
-  set('inv-client-email',   client.email);
-  set('inv-t-sub',          fmt(parseFloat(inv.subtotal)));
-  set('inv-t-total',        fmt(parseFloat(inv.total)));
+  set('inv-doc-number',    inv.invoice_number);
+  set('inv-title-display', inv.title);
+  set('inv-doc-date',      fmtDate(inv.created_at));
+  set('inv-doc-due',       fmtDate(inv.due_date));
+  set('inv-client-name',   client.name);
+  set('inv-client-company',client.company || '');
+  set('inv-client-email',  client.email);
+  set('inv-t-sub',         fmt(parseFloat(inv.subtotal)));
+  set('inv-t-total',       fmt(parseFloat(inv.total)));
 
-  // Taxes
+  const statusEl = document.getElementById('inv-doc-status');
+  if (statusEl) statusEl.innerHTML = `<span class="status-pill ${STATUS[inv.status]?.cls || ''}">${STATUS[inv.status]?.label || inv.status}</span>`;
+
   const tpsRow = document.getElementById('inv-t-tps-row');
   const tvqRow = document.getElementById('inv-t-tvq-row');
-  if (inv.tps_amount !== undefined && parseFloat(inv.tps_amount) > 0) {
-    set('inv-t-tps', fmt(parseFloat(inv.tps_amount)));
-    if (tpsRow) tpsRow.style.display = 'flex';
-  } else { if (tpsRow) tpsRow.style.display = 'none'; }
-  if (inv.tvq_amount !== undefined && parseFloat(inv.tvq_amount) > 0) {
-    set('inv-t-tvq', fmt(parseFloat(inv.tvq_amount)));
-    if (tvqRow) tvqRow.style.display = 'flex';
-  } else { if (tvqRow) tvqRow.style.display = 'none'; }
+  if (inv.tps_amount && parseFloat(inv.tps_amount) > 0) { set('inv-t-tps', fmt(parseFloat(inv.tps_amount))); if (tpsRow) tpsRow.style.display = 'flex'; }
+  else { if (tpsRow) tpsRow.style.display = 'none'; }
+  if (inv.tvq_amount && parseFloat(inv.tvq_amount) > 0) { set('inv-t-tvq', fmt(parseFloat(inv.tvq_amount))); if (tvqRow) tvqRow.style.display = 'flex'; }
+  else { if (tvqRow) tvqRow.style.display = 'none'; }
 
-  // Status badge
-  const statusEl = document.getElementById('inv-status-display');
-  if (statusEl) statusEl.innerHTML = `<span class="status-chip ${STATUS[inv.status]?.cls || ''}">${STATUS[inv.status]?.label || inv.status}</span>`;
-
-  // Items
   const tbody = document.getElementById('inv-items-body');
   if (tbody && Array.isArray(inv.items)) {
     tbody.innerHTML = inv.items.map((it: any) => `
       <tr>
         <td>${it.desc}</td>
-        <td class="tc">${it.qty}</td>
-        <td class="tr">${fmt(parseFloat(it.price))}</td>
-        <td class="tr">${fmt(it.qty * parseFloat(it.price))}</td>
+        <td class="td-center">${it.qty}</td>
+        <td class="td-right">${fmt(parseFloat(it.price))}</td>
+        <td class="td-right">${fmt(it.qty * parseFloat(it.price))}</td>
       </tr>
     `).join('');
   }
 
-  // Notes
-  const notesBlock = document.getElementById('inv-notes-block');
-  const notesText  = document.getElementById('inv-notes-text');
-  if (inv.notes) {
-    if (notesText) notesText.textContent = inv.notes;
-    if (notesBlock) notesBlock.style.display = 'block';
-  } else { if (notesBlock) notesBlock.style.display = 'none'; }
+  const nb = document.getElementById('inv-notes-block');
+  const nt = document.getElementById('inv-notes-text');
+  if (inv.notes) { if (nt) nt.textContent = inv.notes; if (nb) nb.style.display = 'block'; }
+  else { if (nb) nb.style.display = 'none'; }
 };
 </script>
 
 <style>
   main { min-height: 100vh; background: var(--bg); }
 
-  /* ── Login ── */
-  .portal-center { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-  .portal-card { background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 3rem 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(79,106,255,0.1); display: flex; flex-direction: column; gap: 1rem; }
-  .portal-logo { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; }
-  .portal-logo div { display: flex; flex-direction: column; }
-  .logo-nova   { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); letter-spacing: 0.1em; line-height: 1; }
-  .logo-studio { font-size: 0.58rem; font-weight: 500; color: var(--blue); letter-spacing: 0.18em; }
-  .portal-card h2 { font-size: 1.35rem; }
-  .portal-login-sub { font-size: 0.85rem; color: var(--text-2); }
-  #login-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; }
-  .pfield { display: flex; flex-direction: column; gap: 0.4rem; }
-  .pfield label { font-size: 0.8rem; font-weight: 600; }
-  .pfield input { background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 0.72rem 1rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; }
-  .pfield input:focus { border-color: var(--blue); }
-  .login-err { font-size: 0.8rem; color: var(--danger); min-height: 1rem; }
-  .btn-login { background: var(--gradient); color: #fff; border: none; padding: 0.85rem; border-radius: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s; }
-  .btn-login:hover { opacity: 0.88; }
-  .btn-login:disabled { opacity: 0.6; }
-  .back-site { font-size: 0.82rem; color: var(--text-2); text-align: center; margin-top: 0.5rem; transition: color 0.2s; }
-  .back-site:hover { color: var(--blue); }
+  /* ── LOGIN ───────────────────────────────────────────────── */
+  .login-wrap { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+  .login-left { background: var(--navy); display: flex; align-items: center; justify-content: center; padding: 3rem; }
+  .ll-content { max-width: 420px; display: flex; flex-direction: column; gap: 2rem; }
+  .ll-logo { display: flex; align-items: center; gap: 0.75rem; }
+  .ll-logo div { display: flex; flex-direction: column; }
+  .ll-nova   { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; letter-spacing: 0.1em; line-height: 1; }
+  .ll-studio { font-size: 0.6rem; font-weight: 500; color: var(--blue); letter-spacing: 0.2em; margin-top: 2px; }
+  .ll-content h1 { font-size: 2rem; color: #fff; line-height: 1.2; }
+  .ll-content > p { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
+  .ll-perks { display: flex; flex-direction: column; gap: 0.75rem; }
+  .llp { display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; color: rgba(255,255,255,0.6); }
+  .llp-icon { font-size: 1rem; }
+  .login-right { background: #fff; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+  .login-form-wrap { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 1.75rem; }
+  .login-form-head h2 { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .login-form-head p  { font-size: 0.875rem; color: var(--text-2); }
+  #login-form { display: flex; flex-direction: column; gap: 1.1rem; }
+  .lf-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .lf-field label { font-size: 0.8rem; font-weight: 600; }
+  .lf-input-wrap { position: relative; }
+  .lf-input-wrap svg { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-2); }
+  .lf-input-wrap input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 0.82rem 1rem 0.82rem 2.75rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
+  .lf-input-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(79,106,255,0.1); }
+  .lf-err { font-size: 0.8rem; color: var(--danger); min-height: 1.2rem; }
+  .lf-btn { display: flex; align-items: center; justify-content: space-between; background: var(--gradient); color: #fff; border: none; padding: 0.9rem 1.5rem; border-radius: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s, transform 0.2s; box-shadow: 0 4px 16px rgba(79,106,255,0.3); }
+  .lf-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .lf-btn:disabled { opacity: 0.6; }
+  .lf-back { font-size: 0.82rem; color: var(--text-2); text-align: center; transition: color 0.2s; }
+  .lf-back:hover { color: var(--blue); }
+  @media (max-width: 768px) { .login-wrap { grid-template-columns: 1fr; } .login-left { display: none; } }
 
-  /* ── Portal app ── */
+  /* ── PORTAL APP ──────────────────────────────────────────── */
+  .portal-app { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
   .portal-header { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
-  .ph-inner { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 64px; }
-  .portal-logo-link { display: flex; align-items: center; gap: 0.5rem; }
-  .ph-user { display: flex; align-items: center; gap: 1rem; }
-  #ph-welcome { font-size: 0.875rem; font-weight: 500; color: var(--text-2); }
-  .btn-logout { background: none; border: 1px solid var(--border); color: var(--text-2); padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .ph-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 64px; gap: 1rem; }
+  .ph-logo { display: flex; align-items: center; gap: 0.6rem; }
+  .ph-logo div { display: flex; flex-direction: column; }
+  .ph-nova   { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); letter-spacing: 0.1em; line-height: 1; }
+  .ph-studio { font-size: 0.52rem; font-weight: 500; color: var(--blue); letter-spacing: 0.2em; }
+  .ph-right { display: flex; align-items: center; gap: 1.25rem; }
+  .ph-user-badge { display: flex; align-items: center; gap: 0.75rem; }
+  .pub-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #fff; font-family: 'Space Grotesk', sans-serif; flex-shrink: 0; }
+  .pub-name    { font-size: 0.875rem; font-weight: 600; line-height: 1; }
+  .pub-company { font-size: 0.72rem; color: var(--text-2); margin-top: 2px; }
+  .ph-logout { display: flex; align-items: center; gap: 0.5rem; background: none; border: 1px solid var(--border); color: var(--text-2); padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .ph-logout:hover { border-color: var(--danger); color: var(--danger); }
 
-  .portal-body { max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
-  .portal-page-head { margin-bottom: 1.5rem; }
-  .portal-page-head h1 { font-size: 1.6rem; }
-  .portal-company { font-size: 0.875rem; color: var(--text-2); margin-top: 0.25rem; }
+  /* ── BODY ────────────────────────────────────────────────── */
+  .portal-body { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem 4rem; width: 100%; }
+  .dash-head { margin-bottom: 1.5rem; }
+  .dash-head h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+  .dash-sub { font-size: 0.875rem; color: var(--text-2); }
 
-  /* Stats */
-  .portal-stats { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-  .ps-box { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; min-width: 160px; }
-  .ps-n { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--navy); }
-  .ps-l { font-size: 0.75rem; color: var(--text-2); }
-  .ps-warn .ps-n { color: #d97706; }
-  .ps-ok  .ps-n { color: var(--success); }
+  /* STATS */
+  .dash-stats { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .ds-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.1rem 1.4rem; display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 160px; }
+  .dsc-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .dsc-blue   { background: rgba(79,106,255,0.1);  color: var(--blue); }
+  .dsc-amber  { background: rgba(245,158,11,0.1);  color: #d97706; }
+  .dsc-green  { background: rgba(16,185,129,0.1);  color: var(--success); }
+  .dsc-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--navy); line-height: 1; }
+  .dsc-lbl { font-size: 0.72rem; color: var(--text-2); margin-top: 3px; }
 
-  /* Invoice cards */
-  .portal-invoices-list { display: flex; flex-direction: column; gap: 0.75rem; }
-  .portal-inv-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; transition: border-color 0.2s; }
-  .portal-inv-card:hover { border-color: rgba(79,106,255,0.3); }
-  .pic-left { flex-shrink: 0; }
-  .pic-num  { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.9rem; }
-  .pic-date { font-size: 0.72rem; color: var(--text-2); margin-top: 2px; }
-  .pic-mid  { flex: 1; }
-  .pic-title { font-weight: 600; font-size: 0.9rem; }
-  .pic-due  { font-size: 0.75rem; color: var(--text-2); margin-top: 2px; }
-  .pic-total { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; white-space: nowrap; }
-  .btn-view { background: var(--gradient); color: #fff; border: none; padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
+  /* INVOICE LIST */
+  .invoices-list { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .inv-list-header { display: grid; grid-template-columns: 160px 1fr 150px 130px 130px 40px; gap: 1rem; padding: 0.75rem 1.5rem; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .inv-list-header span { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-2); }
+  .inv-list-row { display: grid; grid-template-columns: 160px 1fr 150px 130px 130px 40px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background 0.15s; }
+  .inv-list-row:last-child { border-bottom: none; }
+  .inv-list-row:hover { background: rgba(79,106,255,0.03); }
+  .ilr-num    { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--navy); }
+  .ilr-title  { font-size: 0.875rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ilr-date   { font-size: 0.8rem; color: var(--text-2); }
+  .ilr-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); }
+  .ilr-arrow  { color: var(--text-2); font-size: 1rem; text-align: center; }
+  .empty-inv { text-align: center; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; color: var(--text-2); background: #fff; border: 1px solid var(--border); border-radius: 16px; }
+  .empty-inv svg { opacity: 0.25; }
+  .empty-inv p { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+  .empty-inv small { font-size: 0.82rem; }
 
-  /* Status chips */
-  .status-chip { font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 999px; }
-  .status-pending   { background: rgba(245,158,11,0.1);  color: #d97706; }
-  .status-paid      { background: rgba(16,185,129,0.1);  color: #059669; }
-  .status-overdue   { background: rgba(239,68,68,0.1);   color: #dc2626; }
-  .status-cancelled { background: rgba(107,114,128,0.1); color: #6b7280; }
+  /* STATUS PILLS */
+  .status-pill { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; letter-spacing: 0.04em; white-space: nowrap; }
+  .sp-pending   { background: rgba(245,158,11,0.1);  color: #d97706; }
+  .sp-paid      { background: rgba(16,185,129,0.1);  color: #059669; }
+  .sp-overdue   { background: rgba(239,68,68,0.1);   color: #dc2626; }
+  .sp-cancelled { background: rgba(107,114,128,0.1); color: #6b7280; }
 
-  /* Invoice detail */
-  .invoice-detail { max-width: 820px; margin: 0 auto; }
-  .back-btn { background: none; border: none; color: var(--blue); font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; padding: 0; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.25rem; }
-  .invoice-print-zone { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 3rem; }
+  /* ── INVOICE DETAIL ──────────────────────────────────────── */
+  .inv-detail-wrap { max-width: 860px; }
+  .inv-detail-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .back-btn { display: flex; align-items: center; gap: 0.4rem; background: none; border: none; color: var(--blue); font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; padding: 0; transition: opacity 0.2s; }
+  .back-btn:hover { opacity: 0.7; }
+  .print-btn { display: flex; align-items: center; gap: 0.5rem; background: var(--gradient); color: #fff; border: none; padding: 0.65rem 1.25rem; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s; box-shadow: 0 2px 10px rgba(79,106,255,0.25); }
+  .print-btn:hover { opacity: 0.9; }
 
-  .inv-doc-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-  .inv-doc-logo { display: flex; align-items: center; gap: 0.5rem; }
+  .inv-doc { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 3rem; }
+  .inv-doc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .inv-doc-logo { display: flex; align-items: center; gap: 0.6rem; }
   .inv-doc-logo div { display: flex; flex-direction: column; }
-  .inv-doc-meta { text-align: right; }
-  .inv-doc-meta h2 { font-size: 1.6rem; letter-spacing: 0.08em; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .inv-doc-num { font-size: 0.875rem; color: var(--text-2); margin-top: 0.25rem; }
+  .inv-logo-n { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--navy); letter-spacing: 0.1em; line-height: 1; }
+  .inv-logo-s { font-size: 0.55rem; font-weight: 500; color: var(--blue); letter-spacing: 0.2em; }
+  .inv-doc-meta { text-align: right; display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-end; }
+  .inv-doc-title  { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: 0.1em; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .inv-doc-number { font-size: 0.875rem; color: var(--text-2); }
+  .inv-doc-status { margin-top: 0.25rem; }
 
-  .inv-doc-parties { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem; }
-  .inv-party-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.5rem; }
-  .inv-party-name  { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
-  .inv-party-info  { font-size: 0.82rem; color: var(--text-2); }
-  .inv-dates { display: flex; flex-direction: column; gap: 0.4rem; }
-  .inv-dates div { display: flex; gap: 0.5rem; font-size: 0.82rem; }
-  .inv-dates span { color: var(--text-2); }
-  .inv-dates strong { color: var(--text); }
-  .inv-status-display { margin-top: 0.75rem; }
+  .inv-parties { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem; }
+  .ip-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.6rem; }
+  .ip-name  { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
+  .ip-info  { font-size: 0.82rem; color: var(--text-2); line-height: 1.5; }
+  .ip-dates { display: flex; flex-direction: column; gap: 0.4rem; }
+  .ipd-row  { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.82rem; }
+  .ipd-row span { color: var(--text-2); }
+  .ipd-row strong { color: var(--text); }
 
-  .inv-items-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
-  .inv-items-table thead th { padding: 0.75rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); background: var(--bg); border-bottom: 1px solid var(--border); }
-  .inv-items-table thead th:last-child { text-align: right; }
-  .inv-items-table tbody td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
-  .tc { text-align: center; }
-  .tr { text-align: right; }
+  .inv-title-block { background: var(--bg); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.75rem; }
+  .itb-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); margin-bottom: 0.25rem; }
+  .itb-val   { font-weight: 600; font-size: 0.95rem; }
 
-  .inv-totals-block { max-width: 320px; margin-left: auto; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
-  .itb-row { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-2); }
-  .itb-total { font-weight: 700; font-size: 1.05rem; color: var(--navy); padding-top: 0.6rem; border-top: 2px solid var(--navy); }
+  .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+  .inv-table thead th { padding: 0.75rem 1rem; text-align: left; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); background: var(--bg); border-bottom: 2px solid var(--border); }
+  .th-center { text-align: center; }
+  .th-right  { text-align: right; }
+  .inv-table tbody tr:hover td { background: rgba(79,106,255,0.02); }
+  .inv-table tbody td { padding: 0.9rem 1rem; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
+  .td-center { text-align: center; color: var(--text-2); }
+  .td-right  { text-align: right; }
 
-  .inv-notes-block { background: var(--bg); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
-  .inv-notes-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 0.4rem; }
-  .inv-notes-block p:last-child { font-size: 0.875rem; color: var(--text-2); line-height: 1.65; }
+  .inv-totals { max-width: 340px; margin-left: auto; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .it-row { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-2); }
+  .it-sub { font-size: 0.82rem; }
+  .it-grand { font-size: 1.05rem; font-weight: 600; color: var(--navy); padding-top: 0.75rem; border-top: 2px solid var(--navy); }
+  .it-grand strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; }
 
-  .inv-footer-text { text-align: center; font-size: 0.8rem; color: var(--text-2); padding-top: 1.5rem; border-top: 1px solid var(--border); font-style: italic; }
+  .inv-notes { background: var(--bg); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+  .inv-notes-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); margin-bottom: 0.4rem; }
+  .inv-notes-text { font-size: 0.875rem; color: var(--text); line-height: 1.65; }
+  .inv-footer { text-align: center; font-size: 0.78rem; color: var(--text-2); padding-top: 1.5rem; border-top: 1px solid var(--border); font-style: italic; }
 
-  .btn-print { display: flex; align-items: center; gap: 0.5rem; background: var(--gradient); color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin: 1.5rem auto 0; }
-  .empty-inv { text-align: center; padding: 3rem; color: var(--text-2); }
-
-  /* Print */
+  /* PRINT */
   @media print {
-    .portal-header, .back-btn, .btn-print, .portal-stats, .portal-page-head { display: none !important; }
-    .invoice-print-zone { border: none; box-shadow: none; padding: 0; }
+    .portal-header, .inv-detail-toolbar, .dash-stats, .dash-head { display: none !important; }
+    .inv-doc { border: none; border-radius: 0; padding: 0; box-shadow: none; }
+    .portal-body { padding: 0; max-width: 100%; }
     body { background: white; }
   }
+  @media (max-width: 900px) {
+    .inv-list-header { display: none; }
+    .inv-list-row { grid-template-columns: 1fr 1fr; gap: 0.5rem; padding: 1rem; }
+    .ilr-title { grid-column: 1 / -1; font-size: 0.875rem; }
+    .ilr-arrow { display: none; }
+    .inv-parties { grid-template-columns: 1fr; gap: 1rem; }
+    .inv-doc { padding: 1.5rem; }
+  }
   @media (max-width: 640px) {
-    .portal-inv-card { flex-wrap: wrap; gap: 0.75rem; }
-    .inv-doc-parties { grid-template-columns: 1fr; }
-    .invoice-print-zone { padding: 1.5rem; }
+    .ph-user-badge .pub-company, .ph-user-badge .pub-info { display: none; }
+    .dash-stats { flex-direction: column; }
   }
 </style>
