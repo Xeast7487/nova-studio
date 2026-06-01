@@ -33,25 +33,7 @@ const projects = [
 <header id="nav">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <div class="logo-icon">
-        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-          <defs>
-            <linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#4F6AFF"/>
-              <stop offset="100%" stop-color="#9B50FF"/>
-            </linearGradient>
-          </defs>
-          <path d="M6 34V6l22 28V6" stroke="url(#ng)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M18 6l16 28" stroke="#0F1322" stroke-width="5" stroke-linecap="round"/>
-          <path d="M18 6l16 28" stroke="url(#ng)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
-          <path d="M30 4l2 2m0 0l2-2M32 6V4m0 4v-2" stroke="#9B50FF" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
-        </svg>
-      </div>
-      <div class="logo-text">
-        <span class="logo-nova">NOVA</span>
-        <span class="logo-studio">STUDIO</span>
-      </div>
+      <img src="/logo.png" alt="Nova Studio" class="nav-logo-img" />
     </a>
 
     <nav class="nav-links">
@@ -291,16 +273,7 @@ const projects = [
 <footer>
   <div class="container foot-inner">
     <a href="/" class="footer-logo">
-      <div class="logo-icon" style="transform:scale(0.85)">
-        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-          <defs><linearGradient id="ng2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
-          <path d="M6 34V6l22 28V6" stroke="url(#ng2)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M18 6l16 28" stroke="#0F1322" stroke-width="5" stroke-linecap="round"/>
-          <path d="M18 6l16 28" stroke="url(#ng2)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
-        </svg>
-      </div>
-      <div class="logo-text"><span class="logo-nova">NOVA</span><span class="logo-studio">STUDIO</span></div>
+      <img src="/logo.png" alt="Nova Studio" class="footer-logo-img" />
     </a>
     <p class="foot-copy">&copy; {new Date().getFullYear()} Nova Studio — Tous droits réservés</p>
     <a href="/portal" class="foot-portal">Portail client</a>
@@ -359,11 +332,9 @@ const projects = [
     display: flex; align-items: center; gap: 2rem;
     padding: 0 2rem; height: 70px;
   }
-  .nav-logo { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
-  .logo-icon { display: flex; }
-  .logo-text { display: flex; flex-direction: column; line-height: 1; }
-  .logo-nova   { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); letter-spacing: 0.1em; }
-  .logo-studio { font-size: 0.58rem; font-weight: 500; color: var(--blue); letter-spacing: 0.18em; margin-top: 1px; }
+  .nav-logo { display: flex; align-items: center; flex-shrink: 0; }
+  .nav-logo-img { height: 36px; width: auto; display: block; }
+  .footer-logo-img { height: 32px; width: auto; display: block; }
   .nav-links { display: flex; gap: 0.25rem; margin-left: auto; }
   .nav-links a { padding: 0.5rem 0.9rem; font-size: 0.875rem; font-weight: 500; color: var(--text-2); border-radius: 8px; transition: color 0.2s, background 0.2s; }
   .nav-links a:hover { color: var(--text); background: rgba(79,106,255,0.06); }
