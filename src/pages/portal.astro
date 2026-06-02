@@ -103,6 +103,19 @@ import Layout from '../layouts/Layout.astro';
           </div>
         </div>
         <div class="dash-stats" id="portal-stats"></div>
+
+        <!-- BANDEAU AVIS -->
+        <div id="review-banner" style="display:none" class="review-banner">
+          <div class="rb-left">
+            <span class="rb-icon">⭐</span>
+            <div>
+              <p class="rb-title">Partagez votre expérience</p>
+              <p class="rb-sub">Votre avis aide d'autres clients à nous faire confiance.</p>
+            </div>
+          </div>
+          <button id="open-review-modal" class="rb-btn">Laisser un avis →</button>
+        </div>
+
         <div id="portal-invoices" class="invoices-list"></div>
       </div>
 
@@ -203,6 +216,51 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
 </main>
+
+<!-- MODAL AVIS -->
+<div id="review-modal" class="review-modal-overlay" style="display:none">
+  <div class="review-modal-box">
+    <div class="rm-head" id="rm-head">
+      <div>
+        <h3>Partagez votre expérience</h3>
+        <p>Votre avis sera publié sur notre site après validation.</p>
+      </div>
+      <button id="close-review-modal" class="rm-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="rm-rating-block" id="rm-rating-block">
+      <p class="rm-label">Votre note <span class="req">*</span></p>
+      <div class="star-selector">
+        <button type="button" class="star" data-val="1">★</button>
+        <button type="button" class="star" data-val="2">★</button>
+        <button type="button" class="star" data-val="3">★</button>
+        <button type="button" class="star" data-val="4">★</button>
+        <button type="button" class="star" data-val="5">★</button>
+      </div>
+      <p class="rm-rating-label" id="rating-label">Choisissez une note</p>
+    </div>
+    <div class="rm-field" id="rm-field">
+      <label>Votre commentaire <span class="req">*</span></label>
+      <textarea id="review-comment" rows="4" placeholder="Décrivez votre expérience avec Nova Studio..." maxlength="500"></textarea>
+      <p class="rm-char-count"><span id="char-count">0</span> / 500</p>
+    </div>
+    <p id="review-err" class="rm-err"></p>
+    <div class="rm-foot" id="rm-foot">
+      <button id="cancel-review" class="rm-btn-ghost">Annuler</button>
+      <button id="submit-review" class="rm-btn-submit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Publier mon avis
+      </button>
+    </div>
+    <div id="review-success" class="rm-success" style="display:none">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+      <h4>Merci pour votre avis !</h4>
+      <p>Il sera publié sur notre site après validation par Nova Studio.</p>
+    </div>
+  </div>
+</div>
+
 </Layout>
 
 <script>
@@ -265,6 +323,16 @@ async function showApp(client: any) {
   (window as any)._invoices = invs;
   (window as any)._client   = client;
 
+  // Vérification facture payée → avis possible
+  const hasPaid = invs.some((i: any) => i.status === 'paid');
+  if (hasPaid) {
+    const { data: existing } = await sb.from('nova_reviews').select('id').eq('client_id', client.id).limit(1);
+    if (!existing || existing.length === 0) {
+      const banner = document.getElementById('review-banner');
+      if (banner) banner.style.display = 'flex';
+    }
+  }
+
   // Stats
   const pending = invs.filter((i:any) => i.status === 'pending').reduce((s:number, i:any) => s + parseFloat(i.total), 0);
   const paid    = invs.filter((i:any) => i.status === 'paid').reduce((s:number, i:any) => s + parseFloat(i.total), 0);
@@ -298,6 +366,91 @@ async function showApp(client: any) {
     `).join('')}
   `;
 }
+
+// ── AVIS ──────────────────────────────────────────────────────
+let selectedRating = 0;
+const ratingLabels = ['', 'Mauvais', 'Passable', 'Bien', 'Très bien', 'Excellent !'];
+
+function openReviewModal() {
+  // Reset state
+  selectedRating = 0;
+  const commentEl = document.getElementById('review-comment') as HTMLTextAreaElement;
+  if (commentEl) commentEl.value = '';
+  const charCount = document.getElementById('char-count');
+  if (charCount) charCount.textContent = '0';
+  const errEl = document.getElementById('review-err');
+  if (errEl) errEl.textContent = '';
+  const labelEl = document.getElementById('rating-label');
+  if (labelEl) labelEl.textContent = 'Choisissez une note';
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('star-on'));
+  // Show form, hide success
+  ['rm-head','rm-rating-block','rm-field','rm-foot'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = '';
+  });
+  const successEl = document.getElementById('review-success');
+  if (successEl) successEl.style.display = 'none';
+  const modal = document.getElementById('review-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+document.getElementById('open-review-modal')?.addEventListener('click', openReviewModal);
+document.getElementById('close-review-modal')?.addEventListener('click', () => { document.getElementById('review-modal')!.style.display = 'none'; });
+document.getElementById('cancel-review')?.addEventListener('click', () => { document.getElementById('review-modal')!.style.display = 'none'; });
+document.getElementById('review-modal')?.addEventListener('click', e => { if (e.target === document.getElementById('review-modal')) document.getElementById('review-modal')!.style.display = 'none'; });
+
+document.querySelectorAll('.star').forEach(star => {
+  const val = parseInt((star as HTMLElement).dataset.val!);
+  star.addEventListener('mouseenter', () => {
+    document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('star-on', i < val));
+  });
+  star.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('star-on', i < selectedRating));
+  });
+  star.addEventListener('click', () => {
+    selectedRating = val;
+    document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('star-on', i < val));
+    const labelEl = document.getElementById('rating-label');
+    if (labelEl) labelEl.textContent = ratingLabels[val];
+  });
+});
+
+document.getElementById('review-comment')?.addEventListener('input', function() {
+  const charCount = document.getElementById('char-count');
+  if (charCount) charCount.textContent = (this as HTMLTextAreaElement).value.length.toString();
+});
+
+document.getElementById('submit-review')?.addEventListener('click', async () => {
+  const comment = ((document.getElementById('review-comment') as HTMLTextAreaElement).value || '').trim();
+  const errEl = document.getElementById('review-err')!;
+  errEl.textContent = '';
+  if (!selectedRating) { errEl.textContent = 'Veuillez choisir une note.'; return; }
+  if (comment.length < 10) { errEl.textContent = 'Le commentaire doit faire au moins 10 caractères.'; return; }
+  const btn = document.getElementById('submit-review') as HTMLButtonElement;
+  btn.disabled = true; btn.textContent = 'Envoi...';
+  const client = (window as any)._client;
+  const displayName = client.name + (client.company ? ` — ${client.company}` : '');
+  const { error } = await sb.from('nova_reviews').insert({
+    client_id: client.id,
+    client_name: displayName,
+    rating: selectedRating,
+    comment,
+    approved: false,
+  });
+  if (error) {
+    errEl.textContent = 'Erreur lors de l\'envoi. Veuillez réessayer.';
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Publier mon avis';
+  } else {
+    ['rm-head','rm-rating-block','rm-field','rm-foot'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    const successEl = document.getElementById('review-success');
+    if (successEl) successEl.style.display = 'flex';
+    const banner = document.getElementById('review-banner');
+    if (banner) banner.style.display = 'none';
+    setTimeout(() => { const m = document.getElementById('review-modal'); if (m) m.style.display = 'none'; }, 3500);
+  }
+});
 
 (window as any).viewInvoice = (id: string) => {
   const invs = (window as any)._invoices as any[];
@@ -489,6 +642,47 @@ async function showApp(client: any) {
   .inv-notes-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); margin-bottom: 0.4rem; }
   .inv-notes-text { font-size: 0.875rem; color: var(--text); line-height: 1.65; }
   .inv-footer { text-align: center; font-size: 0.78rem; color: var(--text-2); padding-top: 1.5rem; border-top: 1px solid var(--border); font-style: italic; }
+
+  /* ── REVIEW BANNER ──────────────────────────────────────────── */
+  .review-banner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: linear-gradient(135deg, rgba(79,106,255,0.06), rgba(155,80,255,0.06)); border: 1px solid rgba(79,106,255,0.22); border-radius: 16px; padding: 1.1rem 1.5rem; margin-bottom: 1.25rem; }
+  .rb-left { display: flex; align-items: center; gap: 0.85rem; }
+  .rb-icon { font-size: 1.6rem; line-height: 1; }
+  .rb-title { font-weight: 700; font-size: 0.9rem; color: var(--navy); margin-bottom: 0.15rem; }
+  .rb-sub   { font-size: 0.78rem; color: var(--text-2); }
+  .rb-btn   { background: var(--gradient); color: #fff; border: none; padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s, transform 0.2s; box-shadow: 0 2px 10px rgba(79,106,255,0.28); flex-shrink: 0; white-space: nowrap; }
+  .rb-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* ── REVIEW MODAL ────────────────────────────────────────────── */
+  .review-modal-overlay { position: fixed; inset: 0; background: rgba(15,19,34,0.6); backdrop-filter: blur(6px); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+  .review-modal-box { background: #fff; border-radius: 20px; width: 100%; max-width: 500px; padding: 2rem; display: flex; flex-direction: column; gap: 1.4rem; box-shadow: 0 24px 80px rgba(15,19,34,0.2); }
+  .rm-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .rm-head h3 { font-size: 1.1rem; margin-bottom: 0.2rem; }
+  .rm-head p  { font-size: 0.78rem; color: var(--text-2); }
+  .rm-close { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-2); flex-shrink: 0; transition: all 0.15s; }
+  .rm-close:hover { background: var(--border); }
+  .rm-label { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.6rem; }
+  .rm-rating-block { display: flex; flex-direction: column; }
+  .star-selector { display: flex; gap: 0.15rem; margin-bottom: 0.45rem; }
+  .star { background: none; border: none; font-size: 2.2rem; color: #d1d5db; cursor: pointer; padding: 0 3px; line-height: 1; transition: color 0.12s, transform 0.12s; }
+  .star.star-on { color: #f59e0b; transform: scale(1.12); }
+  .req { color: var(--blue); }
+  .rm-rating-label { font-size: 0.78rem; color: var(--text-2); min-height: 1rem; }
+  .rm-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .rm-field label { font-size: 0.8rem; font-weight: 600; }
+  .rm-field textarea { background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.875rem; font-family: 'Inter', sans-serif; outline: none; resize: none; transition: border-color 0.2s; color: var(--text); }
+  .rm-field textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(79,106,255,0.08); }
+  .rm-char-count { font-size: 0.7rem; color: var(--text-2); text-align: right; }
+  .rm-err { font-size: 0.78rem; color: var(--danger); min-height: 1rem; }
+  .rm-foot { display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+  .rm-btn-ghost { background: none; border: 1.5px solid var(--border); color: var(--text-2); padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.82rem; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .rm-btn-ghost:hover { border-color: var(--text-2); color: var(--text); }
+  .rm-btn-submit { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--gradient); color: #fff; padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s; box-shadow: 0 2px 10px rgba(79,106,255,0.25); }
+  .rm-btn-submit:hover { opacity: 0.9; }
+  .rm-btn-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+  .rm-success { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1rem; text-align: center; }
+  .rm-success svg { color: var(--success); }
+  .rm-success h4 { font-size: 1.05rem; }
+  .rm-success p  { font-size: 0.85rem; color: var(--text-2); }
 
   /* PRINT */
   @media print {

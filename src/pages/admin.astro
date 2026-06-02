@@ -75,6 +75,10 @@ import Layout from '../layouts/Layout.astro';
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         Factures
       </button>
+      <button class="snav-item" data-tab="reviews">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Avis clients
+      </button>
     </nav>
 
     <div class="sidebar-foot">
@@ -108,6 +112,24 @@ import Layout from '../layouts/Layout.astro';
         </button>
       </div>
       <div id="clients-list" class="data-list"></div>
+    </div>
+
+    <!-- TAB: AVIS -->
+    <div id="tab-reviews" class="tab-pane" style="display:none">
+      <div class="pane-header">
+        <div>
+          <h1>Avis clients</h1>
+          <p class="pane-sub">Modérez les avis laissés par vos clients ayant une facture payée</p>
+        </div>
+      </div>
+      <div id="reviews-pending-section">
+        <p class="reviews-section-label">En attente de validation</p>
+        <div id="reviews-pending-list" class="data-list"></div>
+      </div>
+      <div id="reviews-approved-section" style="margin-top:2rem">
+        <p class="reviews-section-label">Publiés sur le site</p>
+        <div id="reviews-approved-list" class="data-list"></div>
+      </div>
     </div>
 
     <!-- TAB: FACTURES -->
@@ -296,6 +318,7 @@ document.querySelectorAll('.snav-item').forEach(btn => {
     document.getElementById(`tab-${tab}`)!.style.display = 'block';
     if (tab === 'invoices') loadInvoices();
     if (tab === 'clients')  loadClients();
+    if (tab === 'reviews')  loadReviews();
   });
 });
 
@@ -561,6 +584,66 @@ function resetInvoiceForm() {
 function openModal(id: string)  { const m = document.getElementById(id); if (m) m.style.display = 'flex'; }
 function closeModal(id: string) { const m = document.getElementById(id); if (m) m.style.display = 'none'; }
 document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) (m as HTMLElement).style.display = 'none'; }));
+
+// ── AVIS ──────────────────────────────────────────────────────
+const STAR_FILLED = '★';
+const starStr = (n: number) => STAR_FILLED.repeat(n) + '☆'.repeat(5 - n);
+
+async function loadReviews() {
+  const { data } = await sb.from('nova_reviews').select('*').order('created_at', { ascending: false });
+  const all = data || [];
+  const pending  = all.filter((r: any) => !r.approved);
+  const approved = all.filter((r: any) =>  r.approved);
+
+  const pendingList  = document.getElementById('reviews-pending-list');
+  const approvedList = document.getElementById('reviews-approved-list');
+
+  const emptyPending = '<div class="empty-state" style="padding:2rem"><p style="font-weight:600;font-size:.9rem">Aucun avis en attente</p></div>';
+  const emptyApproved = '<div class="empty-state" style="padding:2rem"><p style="font-weight:600;font-size:.9rem">Aucun avis publié</p></div>';
+
+  if (pendingList) pendingList.innerHTML = pending.length ? pending.map((r: any) => `
+    <div class="data-row review-row">
+      <div class="dr-avatar rv-avatar">${r.client_name.charAt(0).toUpperCase()}</div>
+      <div class="dr-main">
+        <p class="dr-name">${r.client_name}</p>
+        <p class="rv-stars">${starStr(r.rating)}</p>
+        <p class="rv-comment">"${r.comment}"</p>
+        <p class="dr-meta">${new Date(r.created_at).toLocaleDateString('fr-CA', { day:'numeric', month:'long', year:'numeric' })}</p>
+      </div>
+      <div class="dr-actions">
+        <button class="action-btn action-success" onclick="approveReview('${r.id}')">✓ Approuver</button>
+        <button class="action-btn action-danger"  onclick="deleteReview('${r.id}')">Supprimer</button>
+      </div>
+    </div>
+  `).join('') : emptyPending;
+
+  if (approvedList) approvedList.innerHTML = approved.length ? approved.map((r: any) => `
+    <div class="data-row review-row">
+      <div class="dr-avatar rv-avatar rv-approved">${r.client_name.charAt(0).toUpperCase()}</div>
+      <div class="dr-main">
+        <p class="dr-name">${r.client_name}</p>
+        <p class="rv-stars">${starStr(r.rating)}</p>
+        <p class="rv-comment">"${r.comment}"</p>
+        <p class="dr-meta">${new Date(r.created_at).toLocaleDateString('fr-CA', { day:'numeric', month:'long', year:'numeric' })}</p>
+      </div>
+      <div class="dr-actions">
+        <button class="action-btn action-ghost"  onclick="unapproveReview('${r.id}')">Dépublier</button>
+        <button class="action-btn action-danger" onclick="deleteReview('${r.id}')">Supprimer</button>
+      </div>
+    </div>
+  `).join('') : emptyApproved;
+}
+
+(window as any).approveReview = async (id: string) => {
+  await sb.from('nova_reviews').update({ approved: true }).eq('id', id); loadReviews();
+};
+(window as any).unapproveReview = async (id: string) => {
+  await sb.from('nova_reviews').update({ approved: false }).eq('id', id); loadReviews();
+};
+(window as any).deleteReview = async (id: string) => {
+  if (!confirm('Supprimer cet avis définitivement ?')) return;
+  await sb.from('nova_reviews').delete().eq('id', id); loadReviews();
+};
 </script>
 
 <style is:global>
@@ -722,6 +805,14 @@ document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('cli
   .totals-row.sub { font-size: 0.82rem; }
   .totals-row.grand { font-size: 1rem; color: var(--navy); padding-top: 0.5rem; border-top: 1.5px solid var(--border); }
   .totals-row.grand strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; }
+
+  /* REVIEWS */
+  .reviews-section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); margin-bottom: 0.75rem; }
+  .review-row { align-items: flex-start; }
+  .rv-avatar { border-radius: 10px; align-self: flex-start; }
+  .rv-approved { background: linear-gradient(135deg, #10B981, #059669); }
+  .rv-stars { color: #f59e0b; font-size: 0.95rem; margin: 2px 0 4px; letter-spacing: 0.05em; }
+  .rv-comment { font-size: 0.82rem; color: var(--text-2); font-style: italic; line-height: 1.6; margin-bottom: 4px; }
 
   @media (max-width: 1100px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 900px) { .sidebar { display: none; } .admin-main { padding: 1.5rem; } }
