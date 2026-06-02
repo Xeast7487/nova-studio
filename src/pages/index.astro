@@ -78,34 +78,38 @@ const projects = [
 </div>
 
 <!-- ═══ HERO ════════════════════════════════════════════════ -->
+<div id="cursor-glow" aria-hidden="true"></div>
+<div id="scroll-bar"  aria-hidden="true"></div>
+
 <section class="hero">
   <div class="hero-noise"></div>
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
 
   <div class="container hero-inner">
-    <div class="hero-badge">
+    <div class="hero-badge ns-anim ns-anim-1">
       <span class="badge-dot"></span>
       Disponible pour de nouveaux projets
     </div>
-    <h1 class="hero-title">
+    <h1 class="hero-title ns-anim ns-anim-2" id="hero-title-split">
       Des sites web qui<br/>
       <span class="text-gradient">font la différence</span>
     </h1>
-    <p class="hero-sub">
+    <p class="hero-sub ns-anim ns-anim-3">
       Nova Studio crée des expériences web sur mesure qui propulsent votre marque, engagent vos clients et génèrent des résultats concrets.
     </p>
-    <div class="hero-actions">
-      <a href="#contact" class="btn-primary btn-lg">
+    <div class="hero-actions ns-anim ns-anim-4">
+      <a href="#contact" class="btn-primary btn-lg magnet-btn">
         Démarrer mon projet
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="#portfolio" class="btn-ghost btn-lg">Voir les réalisations</a>
+      <a href="#portfolio" class="btn-ghost btn-lg magnet-btn">Voir les réalisations</a>
     </div>
-    <div class="hero-stats">
-      <div class="hstat"><span class="hstat-n">20+</span><span class="hstat-l">Projets livrés</span></div>
+    <div class="hero-stats ns-anim ns-anim-5">
+      <div class="hstat"><span class="hstat-n counter" data-target="20" data-suffix="+">0</span><span class="hstat-l">Projets livrés</span></div>
       <div class="hstat-sep"></div>
-      <div class="hstat"><span class="hstat-n">100%</span><span class="hstat-l">Clients satisfaits</span></div>
+      <div class="hstat"><span class="hstat-n counter" data-target="100" data-suffix="%">0</span><span class="hstat-l">Clients satisfaits</span></div>
       <div class="hstat-sep"></div>
       <div class="hstat"><span class="hstat-n">7j</span><span class="hstat-l">Délai moyen</span></div>
     </div>
@@ -315,6 +319,134 @@ const projects = [
 </footer>
 
 </Layout>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS PREMIUM — Nova Studio
+══════════════════════════════════════════════════════════ */
+
+// ── 1. Cursor glow ────────────────────────────────────────
+const glow = document.getElementById('cursor-glow');
+if (glow) {
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let cx = mx, cy = my;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+  (function animGlow() {
+    cx += (mx - cx) * 0.08;
+    cy += (my - cy) * 0.08;
+    glow.style.left = cx + 'px';
+    glow.style.top  = cy + 'px';
+    requestAnimationFrame(animGlow);
+  })();
+}
+
+// ── 2. Scroll progress bar ────────────────────────────────
+const scrollBar = document.getElementById('scroll-bar');
+if (scrollBar) {
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    scrollBar.style.transform = `scaleX(${Math.min(pct, 1)})`;
+    scrollBar.style.width = '100%';
+  }, { passive: true });
+}
+
+// ── 3. Hero title word-split reveal ──────────────────────
+const heroTitle = document.getElementById('hero-title-split');
+if (heroTitle) {
+  const processNode = (node: Node, baseDelay: number) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const words = (node.textContent || '').split(/(\s+)/);
+      const frag  = document.createDocumentFragment();
+      words.forEach((part, i) => {
+        if (part.match(/^\s+$/)) { frag.appendChild(document.createTextNode(part)); return; }
+        if (!part) return;
+        const wrap  = document.createElement('span');
+        const inner = document.createElement('span');
+        wrap.className  = 'hero-word-wrap';
+        inner.className = 'hero-word-inner';
+        inner.style.animationDelay = (baseDelay + i * 0.06) + 's';
+        inner.textContent = part;
+        wrap.appendChild(inner);
+        frag.appendChild(wrap);
+      });
+      node.parentNode!.replaceChild(frag, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      Array.from(node.childNodes).forEach((child, ci) => processNode(child, baseDelay + ci * 0.1));
+    }
+  };
+  Array.from(heroTitle.childNodes).forEach((child, i) => processNode(child, 0.25 + i * 0.15));
+}
+
+// ── 4. 3D card tilt ───────────────────────────────────────
+document.querySelectorAll('.service-card, .project-card, .plan-card').forEach(el => {
+  const card = el as HTMLElement;
+  card.classList.add('tilt-card');
+  card.addEventListener('mousemove', (e: Event) => {
+    const ev      = e as MouseEvent;
+    const rect    = card.getBoundingClientRect();
+    const x       = (ev.clientX - rect.left) / rect.width  - 0.5;
+    const y       = (ev.clientY - rect.top)  / rect.height - 0.5;
+    card.style.transform = `perspective(900px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateY(-4px) scale(1.01)`;
+    card.style.boxShadow = `${-x * 16}px ${-y * 16}px 40px rgba(79,106,255,0.12)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+    card.style.boxShadow = '';
+    card.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s ease';
+    setTimeout(() => { card.style.transition = ''; }, 500);
+  });
+});
+
+// ── 5. Magnetic buttons ───────────────────────────────────
+document.querySelectorAll('.magnet-btn').forEach(el => {
+  const btn = el as HTMLElement;
+  btn.addEventListener('mousemove', (e: Event) => {
+    const ev   = e as MouseEvent;
+    const rect = btn.getBoundingClientRect();
+    const x    = (ev.clientX - rect.left - rect.width  / 2) * 0.28;
+    const y    = (ev.clientY - rect.top  - rect.height / 2) * 0.28;
+    btn.style.transform = `translate(${x}px, ${y}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+    btn.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1)';
+    setTimeout(() => { btn.style.transition = ''; }, 500);
+  });
+});
+
+// ── 6. Counter animation ──────────────────────────────────
+const counters = document.querySelectorAll('.counter');
+if (counters.length) {
+  const runCounter = (el: Element) => {
+    const target = parseInt((el as HTMLElement).dataset.target || '0');
+    const suffix = (el as HTMLElement).dataset.suffix || '';
+    const dur    = 1600;
+    const start  = performance.now();
+    const tick   = (now: number) => {
+      const p   = Math.min((now - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      (el as HTMLElement).textContent = Math.round(ease * target) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+  const cObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { runCounter(e.target); cObs.unobserve(e.target); } });
+  }, { threshold: 0.5 });
+  counters.forEach(c => cObs.observe(c));
+}
+
+// ── 7. Parallax hero orbs on scroll ──────────────────────
+const orb1 = document.querySelector('.hero-orb-1') as HTMLElement | null;
+const orb2 = document.querySelector('.hero-orb-2') as HTMLElement | null;
+if (orb1 && orb2) {
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    orb1.style.transform = `translateY(${y * 0.25}px)`;
+    orb2.style.transform = `translateY(${y * 0.15}px)`;
+  }, { passive: true });
+}
+</script>
 
 <script>
   import { createClient } from '@supabase/supabase-js';
@@ -833,4 +965,81 @@ const projects = [
     .form-row { grid-template-columns: 1fr; }
     .foot-inner { justify-content: center; text-align: center; flex-direction: column; gap: 0.75rem; }
   }
+
+  /* ══════════════════════════════════════════════════════════
+     ANIMATIONS PREMIUM
+  ══════════════════════════════════════════════════════════ */
+
+  /* Cursor glow */
+  #cursor-glow {
+    position: fixed; pointer-events: none; z-index: 0;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,106,255,0.07) 0%, rgba(155,80,255,0.04) 40%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: opacity 0.4s;
+    will-change: left, top;
+  }
+
+  /* Scroll progress */
+  #scroll-bar {
+    position: fixed; top: 0; left: 0; height: 2px; z-index: 9999;
+    background: linear-gradient(90deg, #4F6AFF, #9B50FF);
+    transform-origin: left center; transform: scaleX(0);
+    transition: transform 0.1s linear;
+    will-change: transform;
+  }
+
+  /* Hero orb 3 */
+  .hero-orb-3 {
+    position: absolute; bottom: -120px; left: 50%;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(155,80,255,0.12) 0%, transparent 70%);
+    filter: blur(60px); transform: translateX(-50%);
+    animation: orbFloat3 18s ease-in-out infinite;
+  }
+  @keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(40px,-50px) scale(1.06)} 66%{transform:translate(-25px,25px) scale(0.94)} }
+  @keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-50px,35px) scale(0.94)} 66%{transform:translate(35px,-25px) scale(1.06)} }
+  @keyframes orbFloat3 { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-45%) scale(1.08)} }
+  .hero-orb-1 { animation: orbFloat1 14s ease-in-out infinite; }
+  .hero-orb-2 { animation: orbFloat2 17s ease-in-out infinite; }
+
+  /* ── Hero entrance animations ── */
+  .ns-anim { opacity: 0; }
+  @keyframes nsBlurUp {
+    from { opacity: 0; transform: translateY(28px); filter: blur(8px); }
+    to   { opacity: 1; transform: none; filter: blur(0); }
+  }
+  .ns-anim-1 { animation: nsBlurUp 0.75s cubic-bezier(0.16,1,0.3,1) 0.05s both; }
+  .ns-anim-2 { animation: nsBlurUp 0.85s cubic-bezier(0.16,1,0.3,1) 0.2s  both; }
+  .ns-anim-3 { animation: nsBlurUp 0.75s cubic-bezier(0.16,1,0.3,1) 0.4s  both; }
+  .ns-anim-4 { animation: nsBlurUp 0.75s cubic-bezier(0.16,1,0.3,1) 0.55s both; }
+  .ns-anim-5 { animation: nsBlurUp 0.75s cubic-bezier(0.16,1,0.3,1) 0.7s  both; }
+
+  /* ── Word reveal (hero title) ── */
+  .hero-word-wrap { display: inline-block; overflow: hidden; vertical-align: bottom; }
+  .hero-word-inner {
+    display: inline-block;
+    animation: wordSlide 0.7s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  @keyframes wordSlide { from { transform: translateY(110%); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* ── 3D Tilt cards ── */
+  .tilt-card { transform-style: preserve-3d; will-change: transform; }
+  .tilt-card:hover { z-index: 2; }
+
+  /* ── Magnetic button ── */
+  .magnet-btn { will-change: transform; }
+
+  /* ── Shimmer on nav CTA ── */
+  .nav-cta { overflow: hidden; }
+  .nav-cta::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    animation: shimmer 3s ease-in-out 1.5s infinite;
+  }
+  @keyframes shimmer { 0%{left:-100%} 60%,100%{left:150%} }
+
+  /* ── Scroll reveal (amélioration) ── */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+  .reveal.visible { opacity: 1; transform: none; }
 </style>
