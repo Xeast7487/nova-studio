@@ -193,6 +193,19 @@ const projects = [
       <h2>Ils font <span class="text-gradient">confiance à Nova Studio</span></h2>
       <p class="section-sub">Des vrais clients, de vrais projets, de vrais résultats.</p>
     </div>
+    <div id="reviews-summary" class="reviews-summary" style="display:none">
+      <div class="rs-score" id="rs-score">5.0</div>
+      <div class="rs-sep"></div>
+      <div class="rs-right">
+        <div class="rs-stars" id="rs-stars">★★★★★</div>
+        <div class="rs-count" id="rs-count">0 avis</div>
+      </div>
+      <div class="rs-sep"></div>
+      <div class="rs-verified">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 15.01 9 12.01"/></svg>
+        Avis vérifiés
+      </div>
+    </div>
     <div id="reviews-grid" class="reviews-grid"></div>
   </div>
 </section>
@@ -323,16 +336,53 @@ const projects = [
     if (!reviews || reviews.length === 0) return;
 
     section.style.display = 'block';
-    grid.innerHTML = reviews.map((r: any) => `
-      <div class="review-card">
-        <div class="rc-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-        <p class="rc-comment">"${r.comment}"</p>
-        <div class="rc-author">
-          <div class="rc-avatar">${r.client_name.charAt(0).toUpperCase()}</div>
-          <span class="rc-name">${r.client_name}</span>
+
+    // Summary bar
+    const avg = (reviews.reduce((s: any, r: any) => s + r.rating, 0) / reviews.length).toFixed(1);
+    const summary = document.getElementById('reviews-summary') as HTMLElement | null;
+    if (summary) {
+      summary.style.display = 'flex';
+      const scoreEl = document.getElementById('rs-score');
+      const starsEl = document.getElementById('rs-stars');
+      const countEl = document.getElementById('rs-count');
+      if (scoreEl) scoreEl.textContent = avg;
+      if (starsEl) {
+        const filled = Math.round(parseFloat(avg));
+        starsEl.textContent = '★'.repeat(filled) + '☆'.repeat(5 - filled);
+      }
+      if (countEl) countEl.textContent = `${reviews.length} avis vérifié${reviews.length > 1 ? 's' : ''}`;
+    }
+
+    const avatarColors = [
+      'linear-gradient(135deg,#4F6AFF,#9B50FF)',
+      'linear-gradient(135deg,#00C2A8,#0EA5E9)',
+      'linear-gradient(135deg,#F59E0B,#EF4444)',
+      'linear-gradient(135deg,#10B981,#0EA5E9)',
+      'linear-gradient(135deg,#EC4899,#8B5CF6)',
+      'linear-gradient(135deg,#F97316,#EF4444)',
+    ];
+
+    function fmtDate(iso: string): string {
+      return new Date(iso).toLocaleDateString('fr-CA', { year: 'numeric', month: 'long' });
+    }
+
+    grid.innerHTML = reviews.map((r: any, i: number) => {
+      const colorIdx = r.client_name.charCodeAt(0) % avatarColors.length;
+      return `
+        <div class="review-card" style="animation-delay:${i * 0.08}s">
+          <div class="rc-quote">“</div>
+          <div class="rc-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+          <p class="rc-comment">${r.comment}</p>
+          <div class="rc-author">
+            <div class="rc-avatar" style="background:${avatarColors[colorIdx]}">${r.client_name.charAt(0).toUpperCase()}</div>
+            <div class="rc-info">
+              <span class="rc-name">${r.client_name}</span>
+              <span class="rc-date">${fmtDate(r.created_at)}</span>
+            </div>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   })();
 </script>
 
@@ -535,16 +585,65 @@ const projects = [
   .pc-tag { font-size: 0.68rem; font-weight: 600; background: var(--bg); color: var(--text-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.6rem; }
 
   /* ── AVIS ────────────────────────────────────────────── */
+  /* Reviews summary bar */
+  .reviews-summary {
+    align-items: center; justify-content: center; gap: 2rem;
+    margin: 0 auto 2.5rem; padding: 1.25rem 2.5rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; max-width: 480px;
+  }
+  .rs-score {
+    font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; line-height: 1;
+    background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .rs-sep { width: 1px; height: 44px; background: var(--border); flex-shrink: 0; }
+  .rs-right { display: flex; flex-direction: column; gap: 0.2rem; }
+  .rs-stars { color: #f59e0b; font-size: 1rem; letter-spacing: 0.1em; }
+  .rs-count { font-size: 0.78rem; color: var(--text-2); font-weight: 500; }
+  .rs-verified { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 600; color: #10b981; }
+
+  /* Reviews grid */
   .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-  .review-card { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; transition: transform 0.3s, box-shadow 0.3s; }
-  .review-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(79,106,255,0.08); border-color: rgba(79,106,255,0.2); }
-  .rc-stars { font-size: 1.15rem; color: #f59e0b; letter-spacing: 0.05em; }
-  .rc-comment { font-size: 0.9rem; color: var(--text); line-height: 1.7; flex: 1; font-style: italic; }
-  .rc-author { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border); }
-  .rc-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gradient); color: #fff; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; flex-shrink: 0; }
-  .rc-name { font-size: 0.85rem; font-weight: 600; color: var(--navy); }
+
+  /* Review card */
+  .review-card {
+    position: relative; overflow: hidden;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 20px;
+    padding: 2rem; display: flex; flex-direction: column; gap: 1rem;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    animation: rcFadeUp 0.5s ease both;
+  }
+  .review-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--gradient); opacity: 0; transition: opacity 0.3s;
+  }
+  .review-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(79,106,255,0.1); border-color: rgba(79,106,255,0.25); }
+  .review-card:hover::before { opacity: 1; }
+
+  /* Decorative quote */
+  .rc-quote {
+    position: absolute; top: 0.5rem; right: 1.25rem;
+    font-size: 5.5rem; line-height: 1; font-family: Georgia, serif;
+    background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    opacity: 0.12; pointer-events: none; user-select: none;
+  }
+
+  .rc-stars { font-size: 1rem; color: #f59e0b; letter-spacing: 0.1em; }
+  .rc-comment { font-size: 0.9rem; color: var(--text); line-height: 1.75; flex: 1; }
+  .rc-author { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .rc-avatar { width: 40px; height: 40px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; flex-shrink: 0; }
+  .rc-info { display: flex; flex-direction: column; gap: 0.1rem; }
+  .rc-name { font-size: 0.875rem; font-weight: 600; color: var(--navy); }
+  .rc-date { font-size: 0.75rem; color: var(--text-2); }
+
+  @keyframes rcFadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
   @media (max-width: 1000px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 640px) { .reviews-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .reviews-grid { grid-template-columns: 1fr; }
+    .reviews-summary { flex-direction: column; gap: 1rem; text-align: center; }
+    .rs-sep { width: 44px; height: 1px; }
+  }
 
   /* ── TARIFS ───────────────────────────────────────────── */
   .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: start; }
