@@ -97,6 +97,27 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </aside>
 
+  <!-- MOBILE TOPBAR -->
+  <div class="mobile-topbar">
+    <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Ouvrir le menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <a href="/" class="mobile-logo">
+      <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+        <defs><linearGradient id="lg-mob" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4F6AFF"/><stop offset="100%" stop-color="#9B50FF"/></linearGradient></defs>
+        <path d="M6 34V6l22 28V6" stroke="url(#lg-mob)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18 6l16 28" stroke="rgba(255,255,255,0.12)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M18 6l16 28" stroke="url(#lg-mob)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="32" cy="8" r="2.5" fill="#9B50FF"/>
+      </svg>
+      <div><span class="sbl-n">NOVA</span><span class="sbl-s">STUDIO</span></div>
+    </a>
+    <div style="width:40px"></div>
+  </div>
+
+  <!-- MOBILE SIDEBAR OVERLAY -->
+  <div id="mobile-overlay" class="mobile-overlay"></div>
+
   <!-- MAIN CONTENT -->
   <main class="admin-main">
 
@@ -798,6 +819,29 @@ function resetPrintForm() {
   (document.getElementById('print-form') as HTMLFormElement).reset();
   (document.getElementById('print-modal-title') as HTMLElement).textContent = 'Nouvelle commande';
 }
+
+// ── MOBILE MENU ───────────────────────────────────────────────
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileOverlay = document.getElementById('mobile-overlay');
+const sidebar = document.querySelector('.sidebar') as HTMLElement | null;
+
+function openMobileMenu() {
+  sidebar?.classList.add('mobile-open');
+  mobileOverlay?.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  sidebar?.classList.remove('mobile-open');
+  mobileOverlay?.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+mobileMenuBtn?.addEventListener('click', openMobileMenu);
+mobileOverlay?.addEventListener('click', closeMobileMenu);
+
+document.querySelectorAll('.snav-item').forEach(btn => {
+  btn.addEventListener('click', () => { if (window.innerWidth <= 900) closeMobileMenu(); });
+});
 </script>
 
 <style is:global>
@@ -971,7 +1015,31 @@ function resetPrintForm() {
   .rv-stars { color: #f59e0b; font-size: 0.95rem; margin: 2px 0 4px; letter-spacing: 0.05em; }
   .rv-comment { font-size: 0.82rem; color: var(--text-2); font-style: italic; line-height: 1.6; margin-bottom: 4px; }
 
+  /* MOBILE TOPBAR */
+  .mobile-topbar { display: none; }
+
+  /* MOBILE OVERLAY */
+  .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(15,19,34,0.5); backdrop-filter: blur(2px); z-index: 99; }
+  .mobile-overlay.active { display: block; }
+
   @media (max-width: 1100px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 900px) { .sidebar { display: none; } .admin-main { padding: 1.5rem; } }
+
+  @media (max-width: 900px) {
+    .admin-wrap { flex-direction: column; }
+
+    /* Topbar mobile */
+    .mobile-topbar { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .mobile-menu-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); transition: all 0.15s; flex-shrink: 0; }
+    .mobile-menu-btn:hover { background: var(--border); }
+    .mobile-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+
+    /* Sidebar en drawer sur mobile */
+    .sidebar { display: flex; position: fixed; left: -260px; top: 0; height: 100vh; width: 240px; z-index: 200; transition: left 0.28s cubic-bezier(0.4,0,0.2,1); box-shadow: none; }
+    .sidebar.mobile-open { left: 0; box-shadow: 0 0 40px rgba(15,19,34,0.15); }
+
+    .admin-main { padding: 1.25rem; }
+  }
+
   @media (max-width: 700px) { .mform-row { grid-template-columns: 1fr; } .data-row { flex-wrap: wrap; } .items-cols-header, .item-row { grid-template-columns: 1fr 50px 90px 70px 24px; } }
+  @media (max-width: 500px) { .stats-bar { grid-template-columns: 1fr 1fr; } .pane-header { flex-direction: column; align-items: flex-start; } }
 </style>
