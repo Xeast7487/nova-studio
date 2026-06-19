@@ -1040,6 +1040,76 @@ document.querySelectorAll('.snav-item').forEach(btn => {
     .admin-main { padding: 1.25rem; }
   }
 
-  @media (max-width: 700px) { .mform-row { grid-template-columns: 1fr; } .data-row { flex-wrap: wrap; } .items-cols-header, .item-row { grid-template-columns: 1fr 50px 90px 70px 24px; } }
-  @media (max-width: 500px) { .stats-bar { grid-template-columns: 1fr 1fr; } .pane-header { flex-direction: column; align-items: flex-start; } }
+  @media (max-width: 700px) {
+    .mform-row { grid-template-columns: 1fr; }
+    .data-row { flex-wrap: wrap; }
+    .dr-actions { flex-wrap: wrap; }
+    .dr-inv-num { min-width: 0; }
+    .items-cols-header, .item-row { grid-template-columns: 1fr 50px 90px 70px 24px; }
+  }
+
+  /* ── MOBILES PETITS (≤600px) ─────────────────────────────── */
+  @media (max-width: 600px) {
+    /* Modales: feuille de fond */
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal { border-radius: 20px 20px 0 0; max-height: 92vh; padding: 1.5rem 1.25rem 2rem; }
+
+    /* Rangées de données: disposition carte */
+    .data-row { padding: 0.9rem; gap: 0.5rem 0.7rem; }
+
+    .dr-inv-num {
+      order: -1; flex: 0 0 100%; min-width: 0;
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+    .dr-inv-num .dr-name { font-size: 0.78rem; color: var(--text-2); }
+
+    .dr-main { flex: 1 1 0; min-width: 0; }
+    .dr-amount { margin-left: auto; }
+
+    .dr-actions {
+      flex: 0 0 100%; gap: 0.4rem;
+      border-top: 1px solid var(--border); padding-top: 0.5rem;
+    }
+    .action-btn {
+      flex: 1; text-align: center; justify-content: center;
+      min-height: 36px; padding: 0.45rem 0.4rem; font-size: 0.73rem;
+    }
+
+    /* Lignes de facturation: flex empilé */
+    .items-cols-header { display: none; }
+    .item-row {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+      padding: 0.6rem; background: #fff; border-radius: 8px; border: 1px solid var(--border);
+    }
+    .item-row > input:first-child { flex: 1 1 100%; }
+    .item-row > input:nth-child(2) { flex: 0 0 60px; }
+    .item-row > input:nth-child(3) { flex: 1 1 90px; }
+    .item-line-total { margin-left: auto; }
+    .item-remove { flex: 0 0 auto; }
+
+    /* Taxes */
+    .tax-block { flex-wrap: wrap; }
+
+    /* Stat cards */
+    .stat-card { padding: 0.85rem; }
+  }
+
+  @media (max-width: 500px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .pane-header { flex-direction: column; align-items: flex-start; }
+    .pane-header .btn-primary { width: 100%; justify-content: center; }
+    .modal-foot { flex-direction: column-reverse; }
+    .modal-foot .btn-primary, .modal-foot .btn-ghost { width: 100%; justify-content: center; }
+  }
+
+  @media (max-width: 480px) {
+    .admin-main { padding: 0.75rem; }
+    .stats-bar { gap: 0.5rem; }
+    .stat-card { padding: 0.7rem 0.8rem; border-radius: 12px; gap: 0.6rem; }
+    .stat-icon { width: 34px; height: 34px; border-radius: 8px; }
+    .sc-val { font-size: 1rem; }
+    .sc-lbl { font-size: 0.68rem; }
+    .pane-header h1 { font-size: 1.2rem; }
+  }
 </style>
